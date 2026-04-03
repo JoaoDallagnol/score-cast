@@ -1,0 +1,17 @@
+# Backend / Maven
+api/target/
+api/.mvn/wrapper/maven-wrapper.jar
+api/.jdk/
+
+# H2 database files (persisted locally)
+api/data/
+data/
+*.mv.db
+*.trace.db
+
+# IDE
+.idea/
+*.iml
+.project
+.classpath
+.settings/
