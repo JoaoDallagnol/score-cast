@@ -1,4 +1,4 @@
-package com.scorecast.web.dto;
+package com.scorecast.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

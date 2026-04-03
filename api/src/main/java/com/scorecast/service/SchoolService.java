@@ -2,10 +2,10 @@ package com.scorecast.service;
 
 import com.scorecast.domain.School;
 import com.scorecast.repository.SchoolRepository;
-import com.scorecast.web.dto.SchoolRequest;
-import com.scorecast.web.dto.SchoolResponse;
-import com.scorecast.web.error.NotFoundException;
-import com.scorecast.web.error.BadRequestException;
+import com.scorecast.dto.SchoolRequest;
+import com.scorecast.dto.SchoolResponse;
+import com.scorecast.error.NotFoundException;
+import com.scorecast.error.BadRequestException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

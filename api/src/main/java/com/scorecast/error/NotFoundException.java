@@ -1,4 +1,4 @@
-package com.scorecast.web.error;
+package com.scorecast.error;
 
 public class NotFoundException extends RuntimeException {
 

@@ -3,7 +3,7 @@ package com.scorecast.service;
 import com.scorecast.domain.Student;
 import com.scorecast.repository.PredictionRepository;
 import com.scorecast.repository.StudentRepository;
-import com.scorecast.web.dto.RankingEntryResponse;
+import com.scorecast.dto.RankingEntryResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

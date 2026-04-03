@@ -1,8 +1,8 @@
-package com.scorecast.web;
+package com.scorecast.controller;
 
+import com.scorecast.dto.ChampionshipMatchResponse;
+import com.scorecast.dto.MatchRequest;
 import com.scorecast.service.ChampionshipMatchService;
-import com.scorecast.web.dto.ChampionshipMatchResponse;
-import com.scorecast.web.dto.MatchRequest;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

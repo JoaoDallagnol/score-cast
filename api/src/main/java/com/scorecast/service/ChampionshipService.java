@@ -2,9 +2,9 @@ package com.scorecast.service;
 
 import com.scorecast.domain.Championship;
 import com.scorecast.repository.ChampionshipRepository;
-import com.scorecast.web.dto.ChampionshipRequest;
-import com.scorecast.web.dto.ChampionshipResponse;
-import com.scorecast.web.error.NotFoundException;
+import com.scorecast.dto.ChampionshipRequest;
+import com.scorecast.dto.ChampionshipResponse;
+import com.scorecast.error.NotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

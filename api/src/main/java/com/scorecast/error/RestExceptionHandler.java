@@ -1,4 +1,4 @@
-package com.scorecast.web.error;
+package com.scorecast.error;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

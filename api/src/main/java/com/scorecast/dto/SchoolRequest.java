@@ -1,8 +1,8 @@
-package com.scorecast.web.dto;
+package com.scorecast.dto;
 
 import jakarta.validation.constraints.NotBlank;
 
-public record ChampionshipRequest(
+public record SchoolRequest(
         @NotBlank String name
 ) {
 }

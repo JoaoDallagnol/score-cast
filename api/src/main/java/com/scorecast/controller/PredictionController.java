@@ -1,8 +1,8 @@
-package com.scorecast.web;
+package com.scorecast.controller;
 
+import com.scorecast.dto.PredictionRequest;
+import com.scorecast.dto.PredictionResponse;
 import com.scorecast.service.PredictionService;
-import com.scorecast.web.dto.PredictionRequest;
-import com.scorecast.web.dto.PredictionResponse;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;

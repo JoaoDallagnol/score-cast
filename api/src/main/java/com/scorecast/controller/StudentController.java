@@ -1,8 +1,8 @@
-package com.scorecast.web;
+package com.scorecast.controller;
 
+import com.scorecast.dto.StudentRequest;
+import com.scorecast.dto.StudentResponse;
 import com.scorecast.service.StudentService;
-import com.scorecast.web.dto.StudentRequest;
-import com.scorecast.web.dto.StudentResponse;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

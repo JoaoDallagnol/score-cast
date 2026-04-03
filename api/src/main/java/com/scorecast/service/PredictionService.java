@@ -4,9 +4,9 @@ import com.scorecast.domain.ChampionshipMatch;
 import com.scorecast.domain.Prediction;
 import com.scorecast.domain.Student;
 import com.scorecast.repository.PredictionRepository;
-import com.scorecast.web.dto.PredictionRequest;
-import com.scorecast.web.dto.PredictionResponse;
-import com.scorecast.web.error.BadRequestException;
+import com.scorecast.dto.PredictionRequest;
+import com.scorecast.dto.PredictionResponse;
+import com.scorecast.error.BadRequestException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

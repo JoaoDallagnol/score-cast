@@ -4,11 +4,11 @@ import com.scorecast.domain.Championship;
 import com.scorecast.domain.ChampionshipMatch;
 import com.scorecast.repository.ChampionshipMatchRepository;
 import com.scorecast.repository.PredictionRepository;
-import com.scorecast.web.dto.ChampionshipMatchResponse;
-import com.scorecast.web.dto.MatchRequest;
-import com.scorecast.web.dto.MatchResultRequest;
-import com.scorecast.web.error.BadRequestException;
-import com.scorecast.web.error.NotFoundException;
+import com.scorecast.dto.ChampionshipMatchResponse;
+import com.scorecast.dto.MatchRequest;
+import com.scorecast.dto.MatchResultRequest;
+import com.scorecast.error.BadRequestException;
+import com.scorecast.error.NotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -4,8 +4,8 @@ import com.scorecast.domain.Championship;
 import com.scorecast.domain.School;
 import com.scorecast.domain.Student;
 import com.scorecast.repository.StudentRepository;
-import com.scorecast.web.dto.StudentRequest;
-import com.scorecast.web.dto.StudentResponse;
+import com.scorecast.dto.StudentRequest;
+import com.scorecast.dto.StudentResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,7 +50,7 @@ public class StudentService {
 
     @Transactional(readOnly = true)
     public Student require(UUID id) {
-        return studentRepository.findById(id).orElseThrow(() -> new com.scorecast.web.error.NotFoundException("Student not found"));
+        return studentRepository.findById(id).orElseThrow(() -> new com.scorecast.error.NotFoundException("Student not found"));
     }
 
     private StudentResponse toResponse(Student s) {

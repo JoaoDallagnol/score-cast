@@ -1,4 +1,4 @@
-package com.scorecast.web.dto;
+package com.scorecast.dto;
 
 import jakarta.validation.constraints.Min;
 

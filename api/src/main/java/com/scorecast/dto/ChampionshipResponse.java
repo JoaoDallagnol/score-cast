@@ -1,4 +1,4 @@
-package com.scorecast.web.dto;
+package com.scorecast.dto;
 
 import java.time.Instant;
 import java.util.UUID;
