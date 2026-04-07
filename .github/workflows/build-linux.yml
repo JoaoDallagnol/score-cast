@@ -1,0 +1,30 @@
+name: Build Linux (JAR)
+
+on:
+  push:
+    tags:
+      - 'linux-v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Build JAR
+        working-directory: api
+        run: mvn -B package -DskipTests
+
+      - name: Upload Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: api/target/scorecast-api-*.jar
+          name: ${{ github.ref_name }}
