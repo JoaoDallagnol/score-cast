@@ -28,3 +28,11 @@ server:
   port: 8080
   servlet:
     context-path: /api
+
+logging:
+  file:
+    name: ./logs/scorecast.log
+  level:
+    com.scorecast: INFO
+    org.springframework.web: WARN
+    org.hibernate: WARN

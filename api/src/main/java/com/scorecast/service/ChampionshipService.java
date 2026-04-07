@@ -5,6 +5,8 @@ import com.scorecast.repository.ChampionshipRepository;
 import com.scorecast.dto.ChampionshipRequest;
 import com.scorecast.dto.ChampionshipResponse;
 import com.scorecast.error.NotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +16,8 @@ import java.util.UUID;
 @Service
 public class ChampionshipService {
 
+    private static final Logger log = LoggerFactory.getLogger(ChampionshipService.class);
+
     private final ChampionshipRepository championshipRepository;
 
     public ChampionshipService(ChampionshipRepository championshipRepository) {
@@ -22,9 +26,11 @@ public class ChampionshipService {
 
     @Transactional
     public ChampionshipResponse create(ChampionshipRequest request) {
+        log.info("Creating championship: {}", request.name());
         Championship c = new Championship();
         c.setName(request.name().trim());
         championshipRepository.save(c);
+        log.info("Championship created with id: {}", c.getId());
         return toResponse(c);
     }
 
@@ -40,7 +46,10 @@ public class ChampionshipService {
 
     @Transactional(readOnly = true)
     public Championship require(UUID id) {
-        return championshipRepository.findById(id).orElseThrow(() -> new NotFoundException("Championship not found"));
+        return championshipRepository.findById(id).orElseThrow(() -> {
+            log.warn("Championship not found: {}", id);
+            return new NotFoundException("Championship not found");
+        });
     }
 
     private ChampionshipResponse toResponse(Championship c) {
