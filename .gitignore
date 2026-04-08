@@ -9,6 +9,10 @@ data/
 *.mv.db
 *.trace.db
 
+# Logs
+logs/
+*.log
+
 # IDE
 .idea/
 *.iml
