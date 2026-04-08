@@ -3,8 +3,8 @@ import Layout from './Layout'
 import Championships from './pages/Championships'
 import ChampionshipDetail from './pages/ChampionshipDetail'
 import Schools from './pages/Schools'
+import Students from './pages/Students'
 import Predictions from './pages/Predictions'
-
 import Management from './pages/Management'
 
 export default function App() {
@@ -15,6 +15,7 @@ export default function App() {
           <Route path="/" element={<Championships />} />
           <Route path="/championships/:id" element={<ChampionshipDetail />} />
           <Route path="/schools" element={<Schools />} />
+          <Route path="/students" element={<Students />} />
           <Route path="/predictions" element={<Predictions />} />
           <Route path="/management" element={<Management />} />
         </Route>

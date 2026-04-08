@@ -5,7 +5,6 @@ import { api } from '@/api'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import MatchesTab from './MatchesTab'
-import StudentsTab from './StudentsTab'
 import RankingTab from './RankingTab'
 
 export default function ChampionshipDetail() {
@@ -33,11 +32,9 @@ export default function ChampionshipDetail() {
       <Tabs defaultValue="matches">
         <TabsList>
           <TabsTrigger value="matches">Partidas</TabsTrigger>
-          <TabsTrigger value="students">Alunos</TabsTrigger>
           <TabsTrigger value="ranking">Ranking</TabsTrigger>
         </TabsList>
         <TabsContent value="matches"><MatchesTab championshipId={id} /></TabsContent>
-        <TabsContent value="students"><StudentsTab championshipId={id} /></TabsContent>
         <TabsContent value="ranking"><RankingTab championshipId={id} /></TabsContent>
       </Tabs>
     </div>
