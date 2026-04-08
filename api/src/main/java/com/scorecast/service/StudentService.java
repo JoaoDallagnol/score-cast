@@ -6,6 +6,7 @@ import com.scorecast.domain.Student;
 import com.scorecast.repository.StudentRepository;
 import com.scorecast.dto.StudentRequest;
 import com.scorecast.dto.StudentResponse;
+import com.scorecast.dto.StudentUpdateRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -45,6 +46,19 @@ public class StudentService {
         s.setSerie(request.serie().trim());
         studentRepository.save(s);
         log.info("Student created with id: {}", s.getId());
+        return toResponse(s);
+    }
+
+    @Transactional
+    public StudentResponse update(UUID id, StudentUpdateRequest request) {
+        log.info("Updating student: {}", id);
+        Student s = require(id);
+        School school = schoolService.require(request.schoolId());
+        s.setName(request.name().trim());
+        s.setSerie(request.serie().trim());
+        s.setSchool(school);
+        studentRepository.save(s);
+        log.info("Student updated: {}", id);
         return toResponse(s);
     }
 

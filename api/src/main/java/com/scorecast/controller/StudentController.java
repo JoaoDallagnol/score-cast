@@ -2,11 +2,13 @@ package com.scorecast.controller;
 
 import com.scorecast.dto.StudentRequest;
 import com.scorecast.dto.StudentResponse;
+import com.scorecast.dto.StudentUpdateRequest;
 import com.scorecast.service.StudentService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,6 +32,15 @@ public class StudentController {
             @Valid @RequestBody StudentRequest request
     ) {
         return studentService.create(championshipId, request);
+    }
+
+    @PutMapping("/{studentId}")
+    public StudentResponse update(
+            @PathVariable UUID championshipId,
+            @PathVariable UUID studentId,
+            @Valid @RequestBody StudentUpdateRequest request
+    ) {
+        return studentService.update(studentId, request);
     }
 
     @GetMapping

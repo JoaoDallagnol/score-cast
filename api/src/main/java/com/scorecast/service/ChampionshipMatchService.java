@@ -45,10 +45,23 @@ public class ChampionshipMatchService {
         Championship ch = championshipService.require(championshipId);
         ChampionshipMatch m = new ChampionshipMatch();
         m.setChampionship(ch);
+        m.setTitle(request.title() != null ? request.title().trim() : null);
         m.setTeamHome(request.teamHome().trim());
         m.setTeamAway(request.teamAway().trim());
         matchRepository.save(m);
         log.info("Match created with id: {}", m.getId());
+        return toResponse(m);
+    }
+
+    @Transactional
+    public ChampionshipMatchResponse update(UUID matchId, MatchRequest request) {
+        log.info("Updating match: {}", matchId);
+        ChampionshipMatch m = require(matchId);
+        m.setTitle(request.title() != null ? request.title().trim() : null);
+        m.setTeamHome(request.teamHome().trim());
+        m.setTeamAway(request.teamAway().trim());
+        matchRepository.save(m);
+        log.info("Match updated: {}", matchId);
         return toResponse(m);
     }
 
@@ -96,6 +109,7 @@ public class ChampionshipMatchService {
         return new ChampionshipMatchResponse(
                 m.getId(),
                 m.getChampionship().getId(),
+                m.getTitle(),
                 m.getTeamHome(),
                 m.getTeamAway(),
                 m.getScoreHome(),

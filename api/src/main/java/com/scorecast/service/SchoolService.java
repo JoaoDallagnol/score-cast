@@ -4,6 +4,7 @@ import com.scorecast.domain.School;
 import com.scorecast.repository.SchoolRepository;
 import com.scorecast.dto.SchoolRequest;
 import com.scorecast.dto.SchoolResponse;
+import com.scorecast.dto.SchoolUpdateRequest;
 import com.scorecast.error.NotFoundException;
 import com.scorecast.error.BadRequestException;
 import org.slf4j.Logger;
@@ -34,6 +35,21 @@ public class SchoolService {
         try {
             schoolRepository.save(s);
             log.info("School created with id: {}", s.getId());
+        } catch (DataIntegrityViolationException e) {
+            log.warn("School name already exists: {}", request.name());
+            throw new BadRequestException("School name already exists");
+        }
+        return toResponse(s);
+    }
+
+    @Transactional
+    public SchoolResponse update(UUID id, SchoolUpdateRequest request) {
+        log.info("Updating school: {}", id);
+        School s = require(id);
+        s.setName(request.name().trim());
+        try {
+            schoolRepository.save(s);
+            log.info("School updated: {}", id);
         } catch (DataIntegrityViolationException e) {
             log.warn("School name already exists: {}", request.name());
             throw new BadRequestException("School name already exists");

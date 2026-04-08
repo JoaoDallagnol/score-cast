@@ -2,6 +2,7 @@ package com.scorecast.controller;
 
 import com.scorecast.dto.ChampionshipRequest;
 import com.scorecast.dto.ChampionshipResponse;
+import com.scorecast.dto.ChampionshipUpdateRequest;
 import com.scorecast.dto.RankingEntryResponse;
 import com.scorecast.service.ChampionshipService;
 import com.scorecast.service.RankingService;
@@ -9,6 +10,7 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,6 +34,14 @@ public class ChampionshipController {
     @PostMapping
     public ChampionshipResponse create(@Valid @RequestBody ChampionshipRequest request) {
         return championshipService.create(request);
+    }
+
+    @PutMapping("/{id}")
+    public ChampionshipResponse update(
+            @PathVariable UUID id,
+            @Valid @RequestBody ChampionshipUpdateRequest request
+    ) {
+        return championshipService.update(id, request);
     }
 
     @GetMapping

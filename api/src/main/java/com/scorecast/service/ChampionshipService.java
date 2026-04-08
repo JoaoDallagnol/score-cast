@@ -4,6 +4,7 @@ import com.scorecast.domain.Championship;
 import com.scorecast.repository.ChampionshipRepository;
 import com.scorecast.dto.ChampionshipRequest;
 import com.scorecast.dto.ChampionshipResponse;
+import com.scorecast.dto.ChampionshipUpdateRequest;
 import com.scorecast.error.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,16 @@ public class ChampionshipService {
         c.setName(request.name().trim());
         championshipRepository.save(c);
         log.info("Championship created with id: {}", c.getId());
+        return toResponse(c);
+    }
+
+    @Transactional
+    public ChampionshipResponse update(UUID id, ChampionshipUpdateRequest request) {
+        log.info("Updating championship: {}", id);
+        Championship c = require(id);
+        c.setName(request.name().trim());
+        championshipRepository.save(c);
+        log.info("Championship updated: {}", id);
         return toResponse(c);
     }
 

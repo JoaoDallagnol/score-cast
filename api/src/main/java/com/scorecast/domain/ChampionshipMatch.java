@@ -24,6 +24,9 @@ public class ChampionshipMatch {
     @JoinColumn(name = "championship_id", nullable = false)
     private Championship championship;
 
+    @Column(name = "title")
+    private String title;
+
     @Column(name = "team_home", nullable = false)
     private String teamHome;
 
@@ -39,6 +42,9 @@ public class ChampionshipMatch {
     public UUID getId() {
         return id;
     }
+
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
 
     public Championship getChampionship() {
         return championship;

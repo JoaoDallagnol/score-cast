@@ -9,6 +9,7 @@ import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from 
 export default function MatchesTab({ championshipId }) {
   const [matches, setMatches] = useState([])
   const [teams, setTeams] = useState([])
+  const [title, setTitle] = useState('')
   const [teamHome, setTeamHome] = useState('')
   const [teamAway, setTeamAway] = useState('')
   const [error, setError] = useState('')
@@ -32,7 +33,8 @@ export default function MatchesTab({ championshipId }) {
     e.preventDefault()
     if (!teamHome || !teamAway) return
     try {
-      await api.createMatch(championshipId, { teamHome, teamAway })
+      await api.createMatch(championshipId, { title: title.trim(), teamHome, teamAway })
+      setTitle('')
       setTeamHome('')
       setTeamAway('')
       load()
@@ -60,6 +62,10 @@ export default function MatchesTab({ championshipId }) {
   return (
     <div className="space-y-6">
       <form onSubmit={handleCreate} className="grid grid-cols-2 gap-3 max-w-md">
+        <div className="space-y-1 col-span-2">
+          <Label>Título</Label>
+          <Input placeholder="Ex: Semifinal, Rodada 1..." value={title} onChange={(e) => setTitle(e.target.value)} required />
+        </div>
         <div className="space-y-1">
           <Label>Time Casa</Label>
           <Select value={teamHome} onValueChange={setTeamHome}>
@@ -87,12 +93,15 @@ export default function MatchesTab({ championshipId }) {
         {matches.length === 0 && <p className="text-slate-500 text-sm">Nenhuma partida cadastrada.</p>}
         {matches.map((m) => (
           <div key={m.id} className="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3">
-            <span className="font-medium">
-              {m.teamHome} <span className="text-slate-400 mx-2">vs</span> {m.teamAway}
-              {m.scoreHome != null && (
-                <span className="ml-3 text-slate-600 font-bold">{m.scoreHome} – {m.scoreAway}</span>
-              )}
-            </span>
+            <div className="flex flex-col">
+              {m.title && <span className="text-xs text-slate-400 font-medium uppercase tracking-wide">{m.title}</span>}
+              <span className="font-medium">
+                {m.teamHome} <span className="text-slate-400 mx-2">vs</span> {m.teamAway}
+                {m.scoreHome != null && (
+                  <span className="ml-3 text-slate-600 font-bold">{m.scoreHome} – {m.scoreAway}</span>
+                )}
+              </span>
+            </div>
             <Dialog open={resultMatch?.id === m.id} onOpenChange={(open) => !open && setResultMatch(null)}>
               <DialogTrigger asChild>
                 <Button size="sm" variant="outline" onClick={() => setResultMatch(m)}>

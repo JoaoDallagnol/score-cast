@@ -84,7 +84,7 @@ export default function Predictions() {
             <SelectContent>
               {matches.map((m) => (
                 <SelectItem key={m.id} value={String(m.id)}>
-                  {m.teamHome} vs {m.teamAway}
+                  {m.title} — {m.teamHome} vs {m.teamAway}
                 </SelectItem>
               ))}
             </SelectContent>

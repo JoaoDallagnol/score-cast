@@ -5,6 +5,7 @@ import java.util.UUID;
 public record ChampionshipMatchResponse(
         UUID id,
         UUID championshipId,
+        String title,
         String teamHome,
         String teamAway,
         Integer scoreHome,
