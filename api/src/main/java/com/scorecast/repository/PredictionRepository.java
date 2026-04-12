@@ -15,6 +15,8 @@ public interface PredictionRepository extends JpaRepository<Prediction, UUID> {
 
     List<Prediction> findByMatchId(UUID matchId);
 
+    List<Prediction> findByStudentIdAndMatchIdIn(UUID studentId, List<UUID> matchIds);
+
     @Query("SELECT COALESCE(SUM(p.pointsAwarded), 0) FROM Prediction p WHERE p.student.id = :studentId")
     Long sumPointsByStudentId(@Param("studentId") UUID studentId);
 }

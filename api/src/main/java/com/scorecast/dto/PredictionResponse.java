@@ -6,8 +6,8 @@ public record PredictionResponse(
         UUID id,
         UUID studentId,
         UUID matchId,
-        int predHome,
-        int predAway,
+        Integer predHome,
+        Integer predAway,
         int pointsAwarded
 ) {
 }

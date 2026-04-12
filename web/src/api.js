@@ -41,6 +41,10 @@ export const api = {
   // Predictions
   savePrediction: (studentId, matchId, data) =>
     req(`/students/${studentId}/predictions/${matchId}`, { method: 'PUT', body: JSON.stringify(data) }),
+  getPredictions: (studentId, championshipId) =>
+    req(`/students/${studentId}/predictions?championshipId=${championshipId}`),
+  savePredictionsBatch: (studentId, data) =>
+    req(`/students/${studentId}/predictions/batch`, { method: 'POST', body: JSON.stringify(data) }),
 
   // Admin
   backup: () => req('/admin/db/backup', { method: 'POST' }),

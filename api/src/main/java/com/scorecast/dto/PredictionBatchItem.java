@@ -1,8 +1,9 @@
 package com.scorecast.dto;
 
-import jakarta.validation.constraints.Min;
+import java.util.UUID;
 
-public record PredictionRequest(
+public record PredictionBatchItem(
+        UUID matchId,
         Integer predHome,
         Integer predAway
 ) {

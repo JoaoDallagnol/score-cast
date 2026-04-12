@@ -32,11 +32,11 @@ public class Prediction {
     @JoinColumn(name = "match_id", nullable = false)
     private ChampionshipMatch match;
 
-    @Column(name = "pred_home", nullable = false)
-    private int predHome;
+    @Column(name = "pred_home")
+    private Integer predHome;
 
-    @Column(name = "pred_away", nullable = false)
-    private int predAway;
+    @Column(name = "pred_away")
+    private Integer predAway;
 
     @Column(name = "points_awarded", nullable = false)
     private int pointsAwarded;
@@ -61,21 +61,11 @@ public class Prediction {
         this.match = match;
     }
 
-    public int getPredHome() {
-        return predHome;
-    }
+    public Integer getPredHome() { return predHome; }
+    public void setPredHome(Integer predHome) { this.predHome = predHome; }
 
-    public void setPredHome(int predHome) {
-        this.predHome = predHome;
-    }
-
-    public int getPredAway() {
-        return predAway;
-    }
-
-    public void setPredAway(int predAway) {
-        this.predAway = predAway;
-    }
+    public Integer getPredAway() { return predAway; }
+    public void setPredAway(Integer predAway) { this.predAway = predAway; }
 
     public int getPointsAwarded() {
         return pointsAwarded;

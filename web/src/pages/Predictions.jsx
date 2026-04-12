@@ -5,16 +5,57 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
 
+function PredictionCard({ item, onChange }) {
+  return (
+    <div className="rounded-lg border border-slate-200 bg-white px-4 py-4 space-y-3">
+      <div>
+        <p className="text-xs text-slate-400 font-medium uppercase tracking-wide">{item.title}</p>
+        <p className="font-semibold text-slate-800">{item.teamHome} <span className="text-slate-400 font-normal">vs</span> {item.teamAway}</p>
+        {item.scoreHome != null && (
+          <p className="text-xs text-slate-500 mt-0.5">Resultado oficial: {item.scoreHome} – {item.scoreAway}</p>
+        )}
+      </div>
+      <div className="flex items-center gap-3">
+        <div className="space-y-1 flex-1">
+          <Label className="text-xs">{item.teamHome}</Label>
+          <Input
+            type="number"
+            min="0"
+            placeholder="–"
+            value={item.predHome ?? ''}
+            onChange={(e) => onChange(item.matchId, 'predHome', e.target.value)}
+          />
+        </div>
+        <span className="text-slate-400 mt-5">×</span>
+        <div className="space-y-1 flex-1">
+          <Label className="text-xs">{item.teamAway}</Label>
+          <Input
+            type="number"
+            min="0"
+            placeholder="–"
+            value={item.predAway ?? ''}
+            onChange={(e) => onChange(item.matchId, 'predAway', e.target.value)}
+          />
+        </div>
+        {item.pointsAwarded != null && (
+          <div className="mt-5 text-right shrink-0">
+            <span className="text-xs text-slate-400">Pontos</span>
+            <p className="font-bold text-slate-700">{item.pointsAwarded}</p>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
 export default function Predictions() {
   const [championships, setChampionships] = useState([])
   const [students, setStudents] = useState([])
-  const [matches, setMatches] = useState([])
+  const [cards, setCards] = useState([])
   const [championshipId, setChampionshipId] = useState('')
   const [studentId, setStudentId] = useState('')
-  const [matchId, setMatchId] = useState('')
-  const [predHome, setPredHome] = useState('')
-  const [predAway, setPredAway] = useState('')
-  const [saved, setSaved] = useState(null)
+  const [saving, setSaving] = useState(false)
+  const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
 
   useEffect(() => {
@@ -24,39 +65,68 @@ export default function Predictions() {
   async function onChampionshipChange(val) {
     setChampionshipId(val)
     setStudentId('')
-    setMatchId('')
-    setSaved(null)
+    setCards([])
+    setSuccess(false)
     try {
-      const [s, m] = await Promise.all([api.getStudents(val), api.getMatches(val)])
-      setStudents(s)
-      setMatches(m)
+      setStudents(await api.getStudents(val))
     } catch (e) {
       setError(e.message)
     }
   }
 
-  async function handleSave(e) {
-    e.preventDefault()
-    if (!studentId || !matchId) return
+  async function onStudentChange(val) {
+    setStudentId(val)
+    setSuccess(false)
+    setError('')
     try {
-      const result = await api.savePrediction(studentId, matchId, {
-        predHome: Number(predHome),
-        predAway: Number(predAway),
-      })
-      setSaved(result)
-      setError('')
+      const data = await api.getPredictions(val, championshipId)
+      setCards(data)
     } catch (e) {
       setError(e.message)
     }
   }
 
-  const selectedMatch = matches.find((m) => String(m.id) === matchId)
+  function handleChange(matchId, field, value) {
+    setCards((prev) =>
+      prev.map((c) =>
+        c.matchId === matchId
+          ? { ...c, [field]: value === '' ? null : Number(value) }
+          : c
+      )
+    )
+  }
+
+  async function handleSave() {
+    setSaving(true)
+    setSuccess(false)
+    setError('')
+    try {
+      const payload = cards.map((c) => ({
+        matchId: c.matchId,
+        predHome: c.predHome,
+        predAway: c.predAway,
+      }))
+      const updated = await api.savePredictionsBatch(studentId, payload)
+      // merge pontos atualizados de volta nos cards
+      setCards((prev) =>
+        prev.map((c) => {
+          const saved = updated.find((u) => u.matchId === c.matchId)
+          return saved ? { ...c, pointsAwarded: saved.pointsAwarded } : c
+        })
+      )
+      setSuccess(true)
+    } catch (e) {
+      setError(e.message)
+    } finally {
+      setSaving(false)
+    }
+  }
 
   return (
-    <div className="space-y-6 max-w-md">
+    <div className="space-y-6 max-w-xl">
       <h1 className="text-2xl font-bold">Palpites</h1>
 
-      <form onSubmit={handleSave} className="space-y-4">
+      <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1">
           <Label>Campeonato</Label>
           <Select value={championshipId} onValueChange={onChampionshipChange}>
@@ -66,56 +136,41 @@ export default function Predictions() {
             </SelectContent>
           </Select>
         </div>
-
         <div className="space-y-1">
           <Label>Aluno</Label>
-          <Select value={studentId} onValueChange={setStudentId} disabled={!championshipId}>
+          <Select value={studentId} onValueChange={onStudentChange} disabled={!championshipId}>
             <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
             <SelectContent>
               {students.map((s) => <SelectItem key={s.id} value={String(s.id)}>{s.name}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>
-
-        <div className="space-y-1">
-          <Label>Partida</Label>
-          <Select value={matchId} onValueChange={setMatchId} disabled={!championshipId}>
-            <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-            <SelectContent>
-              {matches.map((m) => (
-                <SelectItem key={m.id} value={String(m.id)}>
-                  {m.title} — {m.teamHome} vs {m.teamAway}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        {matchId && (
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1">
-              <Label>{selectedMatch?.teamHome ?? 'Casa'}</Label>
-              <Input type="number" min="0" value={predHome} onChange={(e) => setPredHome(e.target.value)} required />
-            </div>
-            <div className="space-y-1">
-              <Label>{selectedMatch?.teamAway ?? 'Fora'}</Label>
-              <Input type="number" min="0" value={predAway} onChange={(e) => setPredAway(e.target.value)} required />
-            </div>
-          </div>
-        )}
-
-        <Button type="submit" className="w-full" disabled={!studentId || !matchId}>
-          Salvar Palpite
-        </Button>
-      </form>
+      </div>
 
       {error && <p className="text-sm text-red-600">{error}</p>}
 
-      {saved && (
-        <div className="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
-          Palpite salvo!
-          {saved.points != null && <span className="ml-2 font-bold">{saved.points} pontos</span>}
-        </div>
+      {cards.length > 0 && (
+        <>
+          <div className="space-y-3">
+            {cards.map((item) => (
+              <PredictionCard key={item.matchId} item={item} onChange={handleChange} />
+            ))}
+          </div>
+
+          <div className="flex items-center gap-4">
+            <Button onClick={handleSave} disabled={saving} className="w-full">
+              {saving ? 'Salvando...' : 'Atualizar Palpites'}
+            </Button>
+          </div>
+
+          {success && (
+            <p className="text-sm text-green-600 text-center">Palpites salvos com sucesso!</p>
+          )}
+        </>
+      )}
+
+      {studentId && cards.length === 0 && !error && (
+        <p className="text-slate-500 text-sm">Nenhuma partida encontrada neste campeonato.</p>
       )}
     </div>
   )
