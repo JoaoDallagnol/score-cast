@@ -144,7 +144,12 @@ export default function Predictions() {
           <Select value={studentId} onValueChange={onStudentChange} disabled={!championshipId}>
             <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
             <SelectContent>
-              {students.map((s) => <SelectItem key={s.id} value={String(s.id)}>{s.name}</SelectItem>)}
+              {students.map((s) => (
+                <SelectItem key={s.id} value={String(s.id)}>
+                  <span>{s.name}</span>
+                  {s.schoolName && <span className="ml-2 text-slate-400 text-xs">{s.schoolName}</span>}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>

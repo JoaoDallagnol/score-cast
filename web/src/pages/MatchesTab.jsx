@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { ConfirmDeleteDialog } from '@/components/ConfirmDeleteDialog'
+import { LayoutToggle } from '@/components/LayoutToggle'
 
 export default function MatchesTab({ championshipId }) {
   const [matches, setMatches] = useState([])
@@ -20,6 +21,7 @@ export default function MatchesTab({ championshipId }) {
   const [scoreAway, setScoreAway] = useState('')
   const [deleteTarget, setDeleteTarget] = useState(null)
   const [loadingDelete, setLoadingDelete] = useState(false)
+  const [grid, setGrid] = useState(false)
 
   async function load() {
     try {
@@ -38,9 +40,7 @@ export default function MatchesTab({ championshipId }) {
     if (!teamHome || !teamAway) return
     try {
       await api.createMatch(championshipId, { title: title.trim(), teamHomeId: teamHome, teamAwayId: teamAway })
-      setTitle('')
-      setTeamHome('')
-      setTeamAway('')
+      setTitle(''); setTeamHome(''); setTeamAway('')
       load()
     } catch (e) {
       setError(e.message)
@@ -50,13 +50,8 @@ export default function MatchesTab({ championshipId }) {
   async function handleResult(e) {
     e.preventDefault()
     try {
-      await api.setResult(resultMatch.id, {
-        scoreHome: Number(scoreHome),
-        scoreAway: Number(scoreAway),
-      })
-      setResultMatch(null)
-      setScoreHome('')
-      setScoreAway('')
+      await api.setResult(resultMatch.id, { scoreHome: Number(scoreHome), scoreAway: Number(scoreAway) })
+      setResultMatch(null); setScoreHome(''); setScoreAway('')
       load()
     } catch (e) {
       setError(e.message)
@@ -106,7 +101,12 @@ export default function MatchesTab({ championshipId }) {
 
       {error && <p className="text-sm text-red-600">{error}</p>}
 
-      <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        <span className="text-sm text-slate-500">{matches.length} partida{matches.length !== 1 ? 's' : ''}</span>
+        <LayoutToggle grid={grid} onToggle={() => setGrid((g) => !g)} />
+      </div>
+
+      <div className={grid ? 'grid grid-cols-2 gap-2' : 'space-y-2'}>
         {matches.length === 0 && <p className="text-slate-500 text-sm">Nenhuma partida cadastrada.</p>}
         {matches.map((m) => (
           <div key={m.id} className="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3">
@@ -122,14 +122,10 @@ export default function MatchesTab({ championshipId }) {
             <div className="flex items-center gap-2">
               <Dialog open={resultMatch?.id === m.id} onOpenChange={(open) => !open && setResultMatch(null)}>
                 <DialogTrigger asChild>
-                  <Button size="sm" variant="outline" onClick={() => setResultMatch(m)}>
-                    Resultado
-                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => setResultMatch(m)}>Resultado</Button>
                 </DialogTrigger>
                 <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Registrar Resultado</DialogTitle>
-                  </DialogHeader>
+                  <DialogHeader><DialogTitle>Registrar Resultado</DialogTitle></DialogHeader>
                   <p className="text-sm text-slate-600 mb-4">{m.teamHomeName} vs {m.teamAwayName}</p>
                   <form onSubmit={handleResult} className="space-y-4">
                     <div className="grid grid-cols-2 gap-3">
