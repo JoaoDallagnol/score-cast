@@ -3,5 +3,12 @@ package com.scorecast.repository;
 import com.scorecast.domain.Team;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface TeamRepository extends JpaRepository<Team, Long> {
+import java.util.List;
+import java.util.UUID;
+
+public interface TeamRepository extends JpaRepository<Team, UUID> {
+
+    List<Team> findByChampionshipIdOrderByNameAsc(UUID championshipId);
+
+    boolean existsByNameAndChampionshipId(String name, UUID championshipId);
 }

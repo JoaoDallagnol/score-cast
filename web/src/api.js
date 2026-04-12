@@ -15,7 +15,13 @@ async function req(path, options = {}) {
 
 export const api = {
   // Teams
-  getTeams: () => req('/teams'),
+  getTeams: (championshipId) => req(`/championships/${championshipId}/teams`),
+  createTeam: (championshipId, name) =>
+    req(`/championships/${championshipId}/teams`, { method: 'POST', body: JSON.stringify({ name }) }),
+  updateTeam: (championshipId, teamId, name) =>
+    req(`/championships/${championshipId}/teams/${teamId}`, { method: 'PUT', body: JSON.stringify({ name }) }),
+  deleteTeam: (championshipId, teamId) =>
+    req(`/championships/${championshipId}/teams/${teamId}`, { method: 'DELETE' }),
 
   // Championships
   getChampionships: () => req('/championships'),

@@ -19,7 +19,7 @@ export default function MatchesTab({ championshipId }) {
 
   async function load() {
     try {
-      const [m, t] = await Promise.all([api.getMatches(championshipId), api.getTeams()])
+      const [m, t] = await Promise.all([api.getMatches(championshipId), api.getTeams(championshipId)])
       setMatches(m)
       setTeams(t)
     } catch (e) {
