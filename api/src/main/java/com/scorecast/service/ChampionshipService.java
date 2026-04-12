@@ -55,6 +55,14 @@ public class ChampionshipService {
         return toResponse(championshipRepository.findById(id).orElseThrow(() -> new NotFoundException("Championship not found")));
     }
 
+    @Transactional
+    public void delete(UUID id) {
+        log.info("Deleting championship: {}", id);
+        Championship c = require(id);
+        championshipRepository.delete(c);
+        log.info("Championship deleted: {}", id);
+    }
+
     @Transactional(readOnly = true)
     public Championship require(UUID id) {
         return championshipRepository.findById(id).orElseThrow(() -> {

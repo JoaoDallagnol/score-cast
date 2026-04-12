@@ -6,8 +6,10 @@ public record ChampionshipMatchResponse(
         UUID id,
         UUID championshipId,
         String title,
-        String teamHome,
-        String teamAway,
+        UUID teamHomeId,
+        String teamHomeName,
+        UUID teamAwayId,
+        String teamAwayName,
         Integer scoreHome,
         Integer scoreAway
 ) {

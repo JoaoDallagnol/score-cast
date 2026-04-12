@@ -12,6 +12,7 @@ export default function ChampionshipDetail() {
   const navigate = useNavigate()
   const [championship, setChampionship] = useState(null)
   const [error, setError] = useState('')
+  const [activeTab, setActiveTab] = useState('matches')
 
   useEffect(() => {
     api.getChampionship(id).then(setChampionship).catch((e) => setError(e.message))
@@ -29,13 +30,17 @@ export default function ChampionshipDetail() {
         <h1 className="text-2xl font-bold">{championship.name}</h1>
       </div>
 
-      <Tabs defaultValue="matches">
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
           <TabsTrigger value="matches">Partidas</TabsTrigger>
           <TabsTrigger value="ranking">Ranking</TabsTrigger>
         </TabsList>
-        <TabsContent value="matches"><MatchesTab championshipId={id} /></TabsContent>
-        <TabsContent value="ranking"><RankingTab championshipId={id} /></TabsContent>
+        <TabsContent value="matches">
+          <MatchesTab key={`matches-${activeTab}`} championshipId={id} />
+        </TabsContent>
+        <TabsContent value="ranking">
+          <RankingTab key={`ranking-${activeTab}`} championshipId={id} />
+        </TabsContent>
       </Tabs>
     </div>
   )

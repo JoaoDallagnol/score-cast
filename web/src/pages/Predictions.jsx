@@ -10,14 +10,14 @@ function PredictionCard({ item, onChange }) {
     <div className="rounded-lg border border-slate-200 bg-white px-4 py-4 space-y-3">
       <div>
         <p className="text-xs text-slate-400 font-medium uppercase tracking-wide">{item.title}</p>
-        <p className="font-semibold text-slate-800">{item.teamHome} <span className="text-slate-400 font-normal">vs</span> {item.teamAway}</p>
+        <p className="font-semibold text-slate-800">{item.teamHomeName} <span className="text-slate-400 font-normal">vs</span> {item.teamAwayName}</p>
         {item.scoreHome != null && (
           <p className="text-xs text-slate-500 mt-0.5">Resultado oficial: {item.scoreHome} – {item.scoreAway}</p>
         )}
       </div>
       <div className="flex items-center gap-3">
         <div className="space-y-1 flex-1">
-          <Label className="text-xs">{item.teamHome}</Label>
+          <Label className="text-xs">{item.teamHomeName}</Label>
           <Input
             type="number"
             min="0"
@@ -28,7 +28,7 @@ function PredictionCard({ item, onChange }) {
         </div>
         <span className="text-slate-400 mt-5">×</span>
         <div className="space-y-1 flex-1">
-          <Label className="text-xs">{item.teamAway}</Label>
+          <Label className="text-xs">{item.teamAwayName}</Label>
           <Input
             type="number"
             min="0"
@@ -66,7 +66,9 @@ export default function Predictions() {
     setChampionshipId(val)
     setStudentId('')
     setCards([])
+    setStudents([])
     setSuccess(false)
+    setError('')
     try {
       setStudents(await api.getStudents(val))
     } catch (e) {
@@ -76,6 +78,7 @@ export default function Predictions() {
 
   async function onStudentChange(val) {
     setStudentId(val)
+    setCards([])
     setSuccess(false)
     setError('')
     try {

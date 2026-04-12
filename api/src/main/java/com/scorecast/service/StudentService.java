@@ -68,6 +68,14 @@ public class StudentService {
         return studentRepository.findByChampionshipIdOrderByNameAsc(championshipId).stream().map(this::toResponse).toList();
     }
 
+    @Transactional
+    public void delete(UUID id) {
+        log.info("Deleting student: {}", id);
+        Student s = require(id);
+        studentRepository.delete(s);
+        log.info("Student deleted: {}", id);
+    }
+
     @Transactional(readOnly = true)
     public Student require(UUID id) {
         return studentRepository.findById(id).orElseThrow(() -> {

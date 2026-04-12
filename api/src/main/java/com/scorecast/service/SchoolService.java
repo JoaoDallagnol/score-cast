@@ -62,6 +62,19 @@ public class SchoolService {
         return schoolRepository.findAll().stream().map(this::toResponse).toList();
     }
 
+    @Transactional
+    public void delete(UUID id) {
+        log.info("Deleting school: {}", id);
+        School s = require(id);
+        try {
+            schoolRepository.delete(s);
+            log.info("School deleted: {}", id);
+        } catch (DataIntegrityViolationException e) {
+            log.warn("Cannot delete school {} as it has students linked", id);
+            throw new BadRequestException("Cannot delete school with students linked");
+        }
+    }
+
     @Transactional(readOnly = true)
     public School require(UUID id) {
         return schoolRepository.findById(id).orElseThrow(() -> {

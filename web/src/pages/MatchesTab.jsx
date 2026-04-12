@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
+import { Trash2 } from 'lucide-react'
 import { api } from '@/api'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { ConfirmDeleteDialog } from '@/components/ConfirmDeleteDialog'
 
 export default function MatchesTab({ championshipId }) {
   const [matches, setMatches] = useState([])
@@ -16,6 +18,8 @@ export default function MatchesTab({ championshipId }) {
   const [resultMatch, setResultMatch] = useState(null)
   const [scoreHome, setScoreHome] = useState('')
   const [scoreAway, setScoreAway] = useState('')
+  const [deleteTarget, setDeleteTarget] = useState(null)
+  const [loadingDelete, setLoadingDelete] = useState(false)
 
   async function load() {
     try {
@@ -33,7 +37,7 @@ export default function MatchesTab({ championshipId }) {
     e.preventDefault()
     if (!teamHome || !teamAway) return
     try {
-      await api.createMatch(championshipId, { title: title.trim(), teamHome, teamAway })
+      await api.createMatch(championshipId, { title: title.trim(), teamHomeId: teamHome, teamAwayId: teamAway })
       setTitle('')
       setTeamHome('')
       setTeamAway('')
@@ -59,6 +63,19 @@ export default function MatchesTab({ championshipId }) {
     }
   }
 
+  async function handleDelete() {
+    setLoadingDelete(true)
+    try {
+      await api.deleteMatch(championshipId, deleteTarget.id)
+      setDeleteTarget(null)
+      load()
+    } catch (e) {
+      setError(e.message)
+    } finally {
+      setLoadingDelete(false)
+    }
+  }
+
   return (
     <div className="space-y-6">
       <form onSubmit={handleCreate} className="grid grid-cols-2 gap-3 max-w-md">
@@ -71,7 +88,7 @@ export default function MatchesTab({ championshipId }) {
           <Select value={teamHome} onValueChange={setTeamHome}>
             <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
             <SelectContent>
-              {teams.map((t) => <SelectItem key={t.id} value={t.name}>{t.name}</SelectItem>)}
+              {teams.map((t) => <SelectItem key={t.id} value={String(t.id)}>{t.name}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>
@@ -80,7 +97,7 @@ export default function MatchesTab({ championshipId }) {
           <Select value={teamAway} onValueChange={setTeamAway}>
             <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
             <SelectContent>
-              {teams.map((t) => <SelectItem key={t.id} value={t.name}>{t.name}</SelectItem>)}
+              {teams.map((t) => <SelectItem key={t.id} value={String(t.id)}>{t.name}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>
@@ -96,41 +113,54 @@ export default function MatchesTab({ championshipId }) {
             <div className="flex flex-col">
               {m.title && <span className="text-xs text-slate-400 font-medium uppercase tracking-wide">{m.title}</span>}
               <span className="font-medium">
-                {m.teamHome} <span className="text-slate-400 mx-2">vs</span> {m.teamAway}
+                {m.teamHomeName} <span className="text-slate-400 mx-2">vs</span> {m.teamAwayName}
                 {m.scoreHome != null && (
                   <span className="ml-3 text-slate-600 font-bold">{m.scoreHome} – {m.scoreAway}</span>
                 )}
               </span>
             </div>
-            <Dialog open={resultMatch?.id === m.id} onOpenChange={(open) => !open && setResultMatch(null)}>
-              <DialogTrigger asChild>
-                <Button size="sm" variant="outline" onClick={() => setResultMatch(m)}>
-                  Resultado
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Registrar Resultado</DialogTitle>
-                </DialogHeader>
-                <p className="text-sm text-slate-600 mb-4">{m.teamHome} vs {m.teamAway}</p>
-                <form onSubmit={handleResult} className="space-y-4">
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="space-y-1">
-                      <Label>{m.teamHome}</Label>
-                      <Input type="number" min="0" value={scoreHome} onChange={(e) => setScoreHome(e.target.value)} required />
+            <div className="flex items-center gap-2">
+              <Dialog open={resultMatch?.id === m.id} onOpenChange={(open) => !open && setResultMatch(null)}>
+                <DialogTrigger asChild>
+                  <Button size="sm" variant="outline" onClick={() => setResultMatch(m)}>
+                    Resultado
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Registrar Resultado</DialogTitle>
+                  </DialogHeader>
+                  <p className="text-sm text-slate-600 mb-4">{m.teamHomeName} vs {m.teamAwayName}</p>
+                  <form onSubmit={handleResult} className="space-y-4">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="space-y-1">
+                        <Label>{m.teamHomeName}</Label>
+                        <Input type="number" min="0" value={scoreHome} onChange={(e) => setScoreHome(e.target.value)} required />
+                      </div>
+                      <div className="space-y-1">
+                        <Label>{m.teamAwayName}</Label>
+                        <Input type="number" min="0" value={scoreAway} onChange={(e) => setScoreAway(e.target.value)} required />
+                      </div>
                     </div>
-                    <div className="space-y-1">
-                      <Label>{m.teamAway}</Label>
-                      <Input type="number" min="0" value={scoreAway} onChange={(e) => setScoreAway(e.target.value)} required />
-                    </div>
-                  </div>
-                  <Button type="submit" className="w-full">Salvar</Button>
-                </form>
-              </DialogContent>
-            </Dialog>
+                    <Button type="submit" className="w-full">Salvar</Button>
+                  </form>
+                </DialogContent>
+              </Dialog>
+              <Button size="icon" variant="ghost" onClick={() => setDeleteTarget(m)}>
+                <Trash2 className="h-4 w-4 text-red-400" />
+              </Button>
+            </div>
           </div>
         ))}
       </div>
+
+      <ConfirmDeleteDialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => !open && setDeleteTarget(null)}
+        description={`Deseja excluir a partida "${deleteTarget?.title} — ${deleteTarget?.teamHomeName} vs ${deleteTarget?.teamAwayName}"? Todos os palpites feitos para esta partida serão removidos permanentemente.`}
+        onConfirm={handleDelete}
+        loading={loadingDelete}
+      />
     </div>
   )
 }

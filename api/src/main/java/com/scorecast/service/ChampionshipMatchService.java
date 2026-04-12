@@ -2,6 +2,7 @@ package com.scorecast.service;
 
 import com.scorecast.domain.Championship;
 import com.scorecast.domain.ChampionshipMatch;
+import com.scorecast.domain.Team;
 import com.scorecast.repository.ChampionshipMatchRepository;
 import com.scorecast.repository.PredictionRepository;
 import com.scorecast.dto.ChampionshipMatchResponse;
@@ -23,17 +24,20 @@ public class ChampionshipMatchService {
     private static final Logger log = LoggerFactory.getLogger(ChampionshipMatchService.class);
 
     private final ChampionshipService championshipService;
+    private final TeamService teamService;
     private final ChampionshipMatchRepository matchRepository;
     private final PredictionRepository predictionRepository;
     private final ScoringService scoringService;
 
     public ChampionshipMatchService(
             ChampionshipService championshipService,
+            TeamService teamService,
             ChampionshipMatchRepository matchRepository,
             PredictionRepository predictionRepository,
             ScoringService scoringService
     ) {
         this.championshipService = championshipService;
+        this.teamService = teamService;
         this.matchRepository = matchRepository;
         this.predictionRepository = predictionRepository;
         this.scoringService = scoringService;
@@ -41,25 +45,35 @@ public class ChampionshipMatchService {
 
     @Transactional
     public ChampionshipMatchResponse create(UUID championshipId, MatchRequest request) {
-        log.info("Creating match: {} vs {} in championship: {}", request.teamHome(), request.teamAway(), championshipId);
+        log.info("Creating match in championship: {}", championshipId);
         Championship ch = championshipService.require(championshipId);
+        Team teamHome = teamService.require(request.teamHomeId(), championshipId);
+        Team teamAway = teamService.require(request.teamAwayId(), championshipId);
+        if (teamHome.getId().equals(teamAway.getId())) {
+            throw new BadRequestException("teamHome and teamAway must be different");
+        }
         ChampionshipMatch m = new ChampionshipMatch();
         m.setChampionship(ch);
         m.setTitle(request.title() != null ? request.title().trim() : null);
-        m.setTeamHome(request.teamHome().trim());
-        m.setTeamAway(request.teamAway().trim());
+        m.setTeamHome(teamHome);
+        m.setTeamAway(teamAway);
         matchRepository.save(m);
         log.info("Match created with id: {}", m.getId());
         return toResponse(m);
     }
 
     @Transactional
-    public ChampionshipMatchResponse update(UUID matchId, MatchRequest request) {
+    public ChampionshipMatchResponse update(UUID matchId, UUID championshipId, MatchRequest request) {
         log.info("Updating match: {}", matchId);
         ChampionshipMatch m = require(matchId);
+        Team teamHome = teamService.require(request.teamHomeId(), championshipId);
+        Team teamAway = teamService.require(request.teamAwayId(), championshipId);
+        if (teamHome.getId().equals(teamAway.getId())) {
+            throw new BadRequestException("teamHome and teamAway must be different");
+        }
         m.setTitle(request.title() != null ? request.title().trim() : null);
-        m.setTeamHome(request.teamHome().trim());
-        m.setTeamAway(request.teamAway().trim());
+        m.setTeamHome(teamHome);
+        m.setTeamAway(teamAway);
         matchRepository.save(m);
         log.info("Match updated: {}", matchId);
         return toResponse(m);
@@ -90,6 +104,15 @@ public class ChampionshipMatchService {
         return toResponse(m);
     }
 
+    @Transactional
+    public void delete(UUID matchId) {
+        log.info("Deleting match: {}", matchId);
+        ChampionshipMatch m = require(matchId);
+        predictionRepository.deleteAll(predictionRepository.findByMatchId(matchId));
+        matchRepository.delete(m);
+        log.info("Match deleted: {}", matchId);
+    }
+
     @Transactional(readOnly = true)
     public ChampionshipMatch require(UUID id) {
         return matchRepository.findById(id).orElseThrow(() -> {
@@ -110,8 +133,10 @@ public class ChampionshipMatchService {
                 m.getId(),
                 m.getChampionship().getId(),
                 m.getTitle(),
-                m.getTeamHome(),
-                m.getTeamAway(),
+                m.getTeamHome().getId(),
+                m.getTeamHome().getName(),
+                m.getTeamAway().getId(),
+                m.getTeamAway().getName(),
                 m.getScoreHome(),
                 m.getScoreAway()
         );

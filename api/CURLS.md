@@ -41,15 +41,23 @@ curl -sS -X POST http://localhost:8080/api/schools \
 # Listar jogos do campeonato
 curl -sS http://localhost:8080/api/championships/CHAMPIONSHIP_ID/matches
 
-# Cadastrar jogo (só times; placar depois)
+# Criar jogo (title é opcional)
 curl -sS -X POST http://localhost:8080/api/championships/CHAMPIONSHIP_ID/matches \
   -H 'Content-Type: application/json' \
-  -d '{"teamHome":"Flamengo","teamAway":"Palmeiras"}'
+  -d '{"title":"Rodada 1","teamHome":"Flamengo","teamAway":"Palmeiras"}'
+
+# Editar jogo
+curl -sS -X PUT http://localhost:8080/api/championships/CHAMPIONSHIP_ID/matches/MATCH_ID \
+  -H 'Content-Type: application/json' \
+  -d '{"title":"Rodada 1 - Editada","teamHome":"Flamengo","teamAway":"Corinthians"}'
 
 # Definir / atualizar placar oficial
 curl -sS -X PATCH http://localhost:8080/api/matches/MATCH_ID/result \
   -H 'Content-Type: application/json' \
   -d '{"scoreHome":2,"scoreAway":1}'
+
+# Deletar jogo (remove também todos os palpites vinculados)
+curl -sS -X DELETE http://localhost:8080/api/championships/CHAMPIONSHIP_ID/matches/MATCH_ID
 ```
 
 ## Alunos
@@ -67,6 +75,20 @@ curl -sS -X POST http://localhost:8080/api/championships/CHAMPIONSHIP_ID/student
 ## Palpites
 
 ```bash
+# Listar todos os jogos do campeonato com o palpite do aluno embutido
+# predHome/predAway serão null se o aluno ainda não apostou naquele jogo
+curl -sS "http://localhost:8080/api/students/STUDENT_ID/predictions?championshipId=CHAMPIONSHIP_ID"
+
+# Salvar múltiplos palpites de uma vez (batch)
+# Itens com predHome ou predAway null são ignorados automaticamente
+curl -sS -X POST http://localhost:8080/api/students/STUDENT_ID/predictions/batch \
+  -H 'Content-Type: application/json' \
+  -d '[
+    {"matchId":"MATCH_ID_1","predHome":2,"predAway":1},
+    {"matchId":"MATCH_ID_2","predHome":0,"predAway":0}
+  ]'
+
+# Salvar palpite individual (upsert)
 curl -sS -X PUT http://localhost:8080/api/students/STUDENT_ID/predictions/MATCH_ID \
   -H 'Content-Type: application/json' \
   -d '{"predHome":2,"predAway":1}'

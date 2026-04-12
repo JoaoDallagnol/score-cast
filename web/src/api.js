@@ -27,15 +27,23 @@ export const api = {
   getChampionships: () => req('/championships'),
   getChampionship: (id) => req(`/championships/${id}`),
   createChampionship: (name) => req('/championships', { method: 'POST', body: JSON.stringify({ name }) }),
+  updateChampionship: (id, name) => req(`/championships/${id}`, { method: 'PUT', body: JSON.stringify({ name }) }),
+  deleteChampionship: (id) => req(`/championships/${id}`, { method: 'DELETE' }),
 
   // Schools
   getSchools: () => req('/schools'),
   createSchool: (name) => req('/schools', { method: 'POST', body: JSON.stringify({ name }) }),
+  updateSchool: (id, name) => req(`/schools/${id}`, { method: 'PUT', body: JSON.stringify({ name }) }),
+  deleteSchool: (id) => req(`/schools/${id}`, { method: 'DELETE' }),
 
   // Students
   getStudents: (championshipId) => req(`/championships/${championshipId}/students`),
   createStudent: (championshipId, data) =>
     req(`/championships/${championshipId}/students`, { method: 'POST', body: JSON.stringify(data) }),
+  updateStudent: (championshipId, studentId, data) =>
+    req(`/championships/${championshipId}/students/${studentId}`, { method: 'PUT', body: JSON.stringify(data) }),
+  deleteStudent: (championshipId, studentId) =>
+    req(`/championships/${championshipId}/students/${studentId}`, { method: 'DELETE' }),
 
   // Matches
   getMatches: (championshipId) => req(`/championships/${championshipId}/matches`),
@@ -43,6 +51,8 @@ export const api = {
     req(`/championships/${championshipId}/matches`, { method: 'POST', body: JSON.stringify(data) }),
   setResult: (matchId, data) =>
     req(`/matches/${matchId}/result`, { method: 'PATCH', body: JSON.stringify(data) }),
+  deleteMatch: (championshipId, matchId) =>
+    req(`/championships/${championshipId}/matches/${matchId}`, { method: 'DELETE' }),
 
   // Predictions
   savePrediction: (studentId, matchId, data) =>

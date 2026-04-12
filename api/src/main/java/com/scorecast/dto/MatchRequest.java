@@ -1,10 +1,12 @@
 package com.scorecast.dto;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+import java.util.UUID;
 
 public record MatchRequest(
         String title,
-        @NotBlank String teamHome,
-        @NotBlank String teamAway
+        @NotNull UUID teamHomeId,
+        @NotNull UUID teamAwayId
 ) {
 }

@@ -27,11 +27,13 @@ public class ChampionshipMatch {
     @Column(name = "title")
     private String title;
 
-    @Column(name = "team_home", nullable = false)
-    private String teamHome;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "team_home_id", nullable = false)
+    private Team teamHome;
 
-    @Column(name = "team_away", nullable = false)
-    private String teamAway;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "team_away_id", nullable = false)
+    private Team teamAway;
 
     @Column(name = "score_home")
     private Integer scoreHome;
@@ -39,52 +41,25 @@ public class ChampionshipMatch {
     @Column(name = "score_away")
     private Integer scoreAway;
 
-    public UUID getId() {
-        return id;
-    }
+    public UUID getId() { return id; }
 
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
 
-    public Championship getChampionship() {
-        return championship;
-    }
+    public Championship getChampionship() { return championship; }
+    public void setChampionship(Championship championship) { this.championship = championship; }
 
-    public void setChampionship(Championship championship) {
-        this.championship = championship;
-    }
+    public Team getTeamHome() { return teamHome; }
+    public void setTeamHome(Team teamHome) { this.teamHome = teamHome; }
 
-    public String getTeamHome() {
-        return teamHome;
-    }
+    public Team getTeamAway() { return teamAway; }
+    public void setTeamAway(Team teamAway) { this.teamAway = teamAway; }
 
-    public void setTeamHome(String teamHome) {
-        this.teamHome = teamHome;
-    }
+    public Integer getScoreHome() { return scoreHome; }
+    public void setScoreHome(Integer scoreHome) { this.scoreHome = scoreHome; }
 
-    public String getTeamAway() {
-        return teamAway;
-    }
-
-    public void setTeamAway(String teamAway) {
-        this.teamAway = teamAway;
-    }
-
-    public Integer getScoreHome() {
-        return scoreHome;
-    }
-
-    public void setScoreHome(Integer scoreHome) {
-        this.scoreHome = scoreHome;
-    }
-
-    public Integer getScoreAway() {
-        return scoreAway;
-    }
-
-    public void setScoreAway(Integer scoreAway) {
-        this.scoreAway = scoreAway;
-    }
+    public Integer getScoreAway() { return scoreAway; }
+    public void setScoreAway(Integer scoreAway) { this.scoreAway = scoreAway; }
 
     public boolean hasOfficialResult() {
         return scoreHome != null && scoreAway != null;

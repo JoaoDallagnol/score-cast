@@ -61,8 +61,10 @@ public class PredictionService {
             return new MatchWithPredictionResponse(
                     m.getId(),
                     m.getTitle(),
-                    m.getTeamHome(),
-                    m.getTeamAway(),
+                    m.getTeamHome().getId(),
+                    m.getTeamHome().getName(),
+                    m.getTeamAway().getId(),
+                    m.getTeamAway().getName(),
                     m.getScoreHome(),
                     m.getScoreAway(),
                     p != null ? p.getPredHome() : null,
