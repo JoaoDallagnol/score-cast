@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 public class ScoringService {
 
     /**
-     * MVP: 1 point if official result exists and predicted score equals official; otherwise 0.
+     * Returns 10 for exact score, 5 for correct winner/draw with wrong score, 0 otherwise.
      */
     public int computePoints(ChampionshipMatch match, Prediction prediction) {
         if (!match.hasOfficialResult()) {
@@ -17,9 +17,22 @@ public class ScoringService {
         if (prediction.getPredHome() == null || prediction.getPredAway() == null) {
             return 0;
         }
-        if (prediction.getPredHome().equals(match.getScoreHome()) && prediction.getPredAway().equals(match.getScoreAway())) {
-            return 1;
+
+        int sh = match.getScoreHome(), sa = match.getScoreAway();
+        int ph = prediction.getPredHome(), pa = prediction.getPredAway();
+
+        // Placar exato
+        if (ph == sh && pa == sa) {
+            return 10;
         }
+
+        // Acerto do vencedor ou do empate
+        int resultSign = Integer.signum(sh - sa);
+        int predSign   = Integer.signum(ph - pa);
+        if (resultSign == predSign) {
+            return 5;
+        }
+
         return 0;
     }
 

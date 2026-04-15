@@ -6,6 +6,7 @@ import Schools from './pages/Schools'
 import Students from './pages/Students'
 import Teams from './pages/Teams'
 import Predictions from './pages/Predictions'
+import Ranking from './pages/Ranking'
 import Management from './pages/Management'
 
 export default function App() {
@@ -19,6 +20,7 @@ export default function App() {
           <Route path="/students" element={<Students />} />
           <Route path="/teams" element={<Teams />} />
           <Route path="/predictions" element={<Predictions />} />
+          <Route path="/ranking" element={<Ranking />} />
           <Route path="/management" element={<Management />} />
         </Route>
       </Routes>

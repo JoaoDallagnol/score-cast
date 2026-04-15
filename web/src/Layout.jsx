@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom'
-import { Trophy, School, GraduationCap, Shield, Target, Settings } from 'lucide-react'
+import { Trophy, School, GraduationCap, Shield, Target, BarChart2, Settings } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const links = [
@@ -8,6 +8,7 @@ const links = [
   { to: '/students', label: 'Alunos', icon: GraduationCap },
   { to: '/teams', label: 'Times', icon: Shield },
   { to: '/predictions', label: 'Palpites', icon: Target },
+  { to: '/ranking', label: 'Ranking', icon: BarChart2 },
   { to: '/management', label: 'Gerenciamento', icon: Settings },
 ]
 
