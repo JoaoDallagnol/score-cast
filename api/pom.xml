@@ -21,6 +21,13 @@
     </properties>
 
     <dependencies>
+        <!-- System tray support -->
+        <dependency>
+            <groupId>java.desktop</groupId>
+            <artifactId>java.desktop</artifactId>
+            <version>${java.version}</version>
+        </dependency>
+        
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -57,7 +64,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>com.scorecast.ScoreCastApplication</mainClass>
+                    <mainClass>com.scorecast.ScoreCastLauncher</mainClass>
                     <!-- Mantém o JAR original sem repackage para uso com jpackage -->
                     <classifier>exec</classifier>
                 </configuration>
