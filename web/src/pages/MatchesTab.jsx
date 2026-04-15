@@ -21,6 +21,8 @@ export default function MatchesTab({ championshipId }) {
   const [scoreAway, setScoreAway] = useState('')
   const [deleteTarget, setDeleteTarget] = useState(null)
   const [loadingDelete, setLoadingDelete] = useState(false)
+  const [loadingCreate, setLoadingCreate] = useState(false)
+  const [loadingResult, setLoadingResult] = useState(false)
   const [grid, setGrid] = useState(false)
 
   async function load() {
@@ -38,23 +40,29 @@ export default function MatchesTab({ championshipId }) {
   async function handleCreate(e) {
     e.preventDefault()
     if (!teamHome || !teamAway) return
+    setLoadingCreate(true)
     try {
       await api.createMatch(championshipId, { title: title.trim(), teamHomeId: teamHome, teamAwayId: teamAway })
       setTitle(''); setTeamHome(''); setTeamAway('')
       load()
     } catch (e) {
       setError(e.message)
+    } finally {
+      setLoadingCreate(false)
     }
   }
 
   async function handleResult(e) {
     e.preventDefault()
+    setLoadingResult(true)
     try {
       await api.setResult(resultMatch.id, { scoreHome: Number(scoreHome), scoreAway: Number(scoreAway) })
       setResultMatch(null); setScoreHome(''); setScoreAway('')
       load()
     } catch (e) {
       setError(e.message)
+    } finally {
+      setLoadingResult(false)
     }
   }
 
@@ -96,7 +104,7 @@ export default function MatchesTab({ championshipId }) {
             </SelectContent>
           </Select>
         </div>
-        <Button type="submit" className="col-span-2">Adicionar Partida</Button>
+        <Button type="submit" className="col-span-2" loading={loadingCreate}>Adicionar Partida</Button>
       </form>
 
       {error && <p className="text-sm text-red-600">{error}</p>}
@@ -138,7 +146,7 @@ export default function MatchesTab({ championshipId }) {
                         <Input type="number" min="0" value={scoreAway} onChange={(e) => setScoreAway(e.target.value)} required />
                       </div>
                     </div>
-                    <Button type="submit" className="w-full">Salvar</Button>
+                    <Button type="submit" className="w-full" loading={loadingResult}>Salvar</Button>
                   </form>
                 </DialogContent>
               </Dialog>

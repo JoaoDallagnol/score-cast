@@ -19,6 +19,7 @@ export default function Teams() {
   const [error, setError] = useState('')
   const [grid, setGrid] = useState(false)
   const [fullscreen, setFullscreen] = useState(false)
+  const [loadingCreate, setLoadingCreate] = useState(false)
 
   useEffect(() => {
     api.getChampionships().then(setChampionships).catch((e) => setError(e.message))
@@ -32,8 +33,10 @@ export default function Teams() {
   async function handleCreate(e) {
     e.preventDefault()
     if (!name.trim()) return
+    setLoadingCreate(true)
     try { await api.createTeam(championshipId, name.trim()); setName(''); setTeams(await api.getTeams(championshipId)) }
     catch (e) { setError(e.message) }
+    finally { setLoadingCreate(false) }
   }
 
   async function handleUpdate(teamId) {
@@ -84,7 +87,7 @@ export default function Teams() {
             {championshipId && (
               <form onSubmit={handleCreate} className="flex gap-2">
                 <Input placeholder="Nome do time" value={name} onChange={(e) => setName(e.target.value)} required />
-                <Button type="submit">Adicionar</Button>
+                <Button type="submit" loading={loadingCreate}>Adicionar</Button>
               </form>
             )}
             {error && <p className="text-sm text-red-600">{error}</p>}

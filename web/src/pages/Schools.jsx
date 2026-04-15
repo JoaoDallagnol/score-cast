@@ -26,7 +26,9 @@ export default function Schools() {
   async function handleCreate(e) {
     e.preventDefault()
     if (!name.trim()) return
+    setLoading(true)
     try { await api.createSchool(name.trim()); setName(''); load() } catch (e) { setError(e.message) }
+    finally { setLoading(false) }
   }
 
   async function handleUpdate(id) {
@@ -64,7 +66,7 @@ export default function Schools() {
       <h1 className="text-2xl font-bold">Escolas</h1>
       <form onSubmit={handleCreate} className="flex gap-2 max-w-md">
         <Input placeholder="Nome da escola" value={name} onChange={(e) => setName(e.target.value)} />
-        <Button type="submit">Criar</Button>
+        <Button type="submit" loading={loading}>Criar</Button>
       </form>
       {error && <p className="text-sm text-red-600">{error}</p>}
       <div className="flex items-center justify-between">

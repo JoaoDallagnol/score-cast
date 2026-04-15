@@ -166,7 +166,7 @@ export default function Predictions() {
           </div>
 
           <div className="flex items-center gap-4">
-            <Button onClick={handleSave} disabled={saving} className="w-full">
+            <Button onClick={handleSave} loading={saving} className="w-full">
               {saving ? 'Salvando...' : 'Atualizar Palpites'}
             </Button>
           </div>

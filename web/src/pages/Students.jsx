@@ -21,6 +21,7 @@ export default function Students() {
   const [editingData, setEditingData] = useState({})
   const [deleteTarget, setDeleteTarget] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [loadingCreate, setLoadingCreate] = useState(false)
   const [error, setError] = useState('')
   const [grid, setGrid] = useState(false)
 
@@ -43,10 +44,12 @@ export default function Students() {
     e.preventDefault()
     if (!name.trim() || !serie.trim() || !schoolId) return
     setError('')
+    setLoadingCreate(true)
     try {
       await api.createStudent(championshipId, { name: name.trim(), serie: serie.trim(), schoolId })
       setName(''); setSerie(''); setSchoolId('')
     } catch (e) { setError(e.message); return }
+    finally { setLoadingCreate(false) }
     await loadStudents({ schoolId: filterSchoolId || undefined })
   }
 
@@ -127,7 +130,7 @@ export default function Students() {
               <SelectContent>{schools.map((s) => <SelectItem key={s.id} value={String(s.id)}>{s.name}</SelectItem>)}</SelectContent>
             </Select>
           </div>
-          <Button type="submit" className="col-span-2">Cadastrar Aluno</Button>
+          <Button type="submit" className="col-span-2" loading={loadingCreate}>Cadastrar Aluno</Button>
         </form>
       )}
       {error && <p className="text-sm text-red-600">{error}</p>}

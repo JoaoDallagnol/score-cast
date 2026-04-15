@@ -12,6 +12,7 @@ export default function StudentsTab({ championshipId }) {
   const [serie, setSerie] = useState('')
   const [schoolId, setSchoolId] = useState('')
   const [error, setError] = useState('')
+  const [loadingCreate, setLoadingCreate] = useState(false)
 
   async function load() {
     try {
@@ -31,6 +32,7 @@ export default function StudentsTab({ championshipId }) {
   async function handleCreate(e) {
     e.preventDefault()
     if (!name.trim() || !serie.trim() || !schoolId) return
+    setLoadingCreate(true)
     try {
       await api.createStudent(championshipId, { name: name.trim(), serie: serie.trim(), schoolId })
       setName('')
@@ -39,6 +41,8 @@ export default function StudentsTab({ championshipId }) {
       load()
     } catch (e) {
       setError(e.message)
+    } finally {
+      setLoadingCreate(false)
     }
   }
 
@@ -62,7 +66,7 @@ export default function StudentsTab({ championshipId }) {
             </SelectContent>
           </Select>
         </div>
-        <Button type="submit" className="col-span-2">Cadastrar Aluno</Button>
+        <Button type="submit" className="col-span-2" loading={loadingCreate}>Cadastrar Aluno</Button>
       </form>
 
       {error && <p className="text-sm text-red-600">{error}</p>}

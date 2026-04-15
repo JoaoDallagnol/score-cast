@@ -11,6 +11,7 @@ export default function RankingTab({ championshipId }) {
   const [schoolId, setSchoolId] = useState('')
   const [serie, setSerie] = useState('')
   const [error, setError] = useState('')
+  const [loadingFilter, setLoadingFilter] = useState(false)
 
   async function load(params = {}) {
     try {
@@ -32,7 +33,8 @@ export default function RankingTab({ championshipId }) {
     const params = {}
     if (schoolId) params.schoolId = schoolId
     if (serie.trim()) params.serie = serie.trim()
-    load(params)
+    setLoadingFilter(true)
+    load(params).finally(() => setLoadingFilter(false))
   }
 
   return (
@@ -52,7 +54,7 @@ export default function RankingTab({ championshipId }) {
           <Label>Série</Label>
           <Input placeholder="Ex: 9A" value={serie} onChange={(e) => setSerie(e.target.value)} className="w-28" />
         </div>
-        <Button type="submit">Filtrar</Button>
+        <Button type="submit" loading={loadingFilter}>Filtrar</Button>
       </form>
 
       {error && <p className="text-sm text-red-600">{error}</p>}

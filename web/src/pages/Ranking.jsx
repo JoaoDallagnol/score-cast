@@ -13,6 +13,7 @@ export default function Ranking() {
   const [schoolId, setSchoolId] = useState('all')
   const [serie, setSerie] = useState('')
   const [error, setError] = useState('')
+  const [loadingFilter, setLoadingFilter] = useState(false)
 
   useEffect(() => {
     api.getChampionships().then(setChampionships).catch((e) => setError(e.message))
@@ -38,7 +39,8 @@ export default function Ranking() {
     const params = {}
     if (schoolId && schoolId !== 'all') params.schoolId = schoolId
     if (serie.trim()) params.serie = serie.trim()
-    api.getRanking(championshipId, params).then(setRanking).catch((e) => setError(e.message))
+    setLoadingFilter(true)
+    api.getRanking(championshipId, params).then(setRanking).catch((e) => setError(e.message)).finally(() => setLoadingFilter(false))
   }
 
   return (
@@ -83,7 +85,7 @@ export default function Ranking() {
                 className="w-28"
               />
             </div>
-            <Button type="submit">Filtrar</Button>
+            <Button type="submit" loading={loadingFilter}>Filtrar</Button>
           </form>
 
           <div className="overflow-x-auto rounded-lg border border-slate-200">
