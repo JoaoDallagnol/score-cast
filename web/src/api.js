@@ -37,7 +37,11 @@ export const api = {
   deleteSchool: (id) => req(`/schools/${id}`, { method: 'DELETE' }),
 
   // Students
-  getStudents: (championshipId) => req(`/championships/${championshipId}/students`),
+  getStudents: (championshipId, params = {}) => {
+    const filtered = Object.fromEntries(Object.entries(params).filter(([, v]) => v !== undefined))
+    const qs = new URLSearchParams(filtered).toString()
+    return req(`/championships/${championshipId}/students${qs ? `?${qs}` : ''}`)
+  },
   createStudent: (championshipId, data) =>
     req(`/championships/${championshipId}/students`, { method: 'POST', body: JSON.stringify(data) }),
   updateStudent: (championshipId, studentId, data) =>

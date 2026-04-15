@@ -63,9 +63,10 @@ public class StudentService {
     }
 
     @Transactional(readOnly = true)
-    public List<StudentResponse> listByChampionship(UUID championshipId) {
+    public List<StudentResponse> listByChampionship(UUID championshipId, UUID schoolId) {
         championshipService.require(championshipId);
-        return studentRepository.findByChampionshipIdOrderByNameAsc(championshipId).stream().map(this::toResponse).toList();
+        return studentRepository.findForRanking(championshipId, schoolId, null)
+                .stream().map(this::toResponse).toList();
     }
 
     @Transactional

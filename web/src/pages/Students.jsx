@@ -13,6 +13,7 @@ export default function Students() {
   const [schools, setSchools] = useState([])
   const [students, setStudents] = useState([])
   const [championshipId, setChampionshipId] = useState('')
+  const [filterSchoolId, setFilterSchoolId] = useState('')
   const [name, setName] = useState('')
   const [serie, setSerie] = useState('')
   const [schoolId, setSchoolId] = useState('')
@@ -29,19 +30,24 @@ export default function Students() {
       .catch((e) => setError(e.message))
   }, [])
 
+  async function loadStudents(params) {
+    try { setStudents(await api.getStudents(championshipId, params)) } catch (e) { setError(e.message) }
+  }
+
   async function onChampionshipChange(val) {
-    setChampionshipId(val); setStudents([]); setEditingId(null); setError('')
-    try { setStudents(await api.getStudents(val)) } catch (e) { setError(e.message) }
+    setChampionshipId(val); setStudents([]); setEditingId(null); setError(''); setFilterSchoolId('')
+    try { setStudents(await api.getStudents(val, {})) } catch (e) { setError(e.message) }
   }
 
   async function handleCreate(e) {
     e.preventDefault()
     if (!name.trim() || !serie.trim() || !schoolId) return
+    setError('')
     try {
       await api.createStudent(championshipId, { name: name.trim(), serie: serie.trim(), schoolId })
       setName(''); setSerie(''); setSchoolId('')
-      setStudents(await api.getStudents(championshipId))
-    } catch (e) { setError(e.message) }
+    } catch (e) { setError(e.message); return }
+    await loadStudents({ schoolId: filterSchoolId || undefined })
   }
 
   async function handleUpdate(studentId) {
@@ -49,7 +55,7 @@ export default function Students() {
     try {
       await api.updateStudent(championshipId, studentId, { name: editingData.name.trim(), serie: editingData.serie.trim(), schoolId: editingData.schoolId })
       setEditingId(null)
-      setStudents(await api.getStudents(championshipId))
+      await loadStudents({ schoolId: filterSchoolId || undefined })
     } catch (e) { setError(e.message) }
   }
 
@@ -58,7 +64,7 @@ export default function Students() {
     try {
       await api.deleteStudent(championshipId, deleteTarget.id)
       setDeleteTarget(null)
-      setStudents(await api.getStudents(championshipId))
+      await loadStudents({ schoolId: filterSchoolId || undefined })
     } catch (e) { setError(e.message) }
     finally { setLoading(false) }
   }
@@ -127,6 +133,20 @@ export default function Students() {
       {error && <p className="text-sm text-red-600">{error}</p>}
       {championshipId && (
         <>
+          <div className="space-y-1 max-w-md">
+            <Label>Filtrar por escola</Label>
+            <Select value={filterSchoolId || 'all'} onValueChange={(v) => {
+              const val = v === 'all' ? '' : v
+              setFilterSchoolId(val)
+              loadStudents({ schoolId: val || undefined })
+            }}>
+              <SelectTrigger><SelectValue placeholder="Todas" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todas</SelectItem>
+                {schools.map((s) => <SelectItem key={s.id} value={String(s.id)}>{s.name}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
           <div className="flex items-center justify-between">
             <span className="text-sm text-slate-500">{students.length} aluno{students.length !== 1 ? 's' : ''}</span>
             <LayoutToggle grid={grid} onToggle={() => setGrid((g) => !g)} />
