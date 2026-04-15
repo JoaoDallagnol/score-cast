@@ -1,4 +1,5 @@
-const BASE = 'http://localhost:8080/api'
+// Em dev (npm run dev), usa localhost:8080. Em produção (servido pelo Spring Boot), usa caminho relativo.
+const BASE = import.meta.env.DEV ? 'http://localhost:8080/api' : '/api'
 
 async function req(path, options = {}) {
   const res = await fetch(`${BASE}${path}`, {
