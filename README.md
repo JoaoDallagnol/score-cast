@@ -71,7 +71,7 @@ java -jar scorecast-api-0.0.1-SNAPSHOT.jar
 
 Execute o instalador `.exe`. Ele instala o ScoreCast com Java embutido e cria atalho no menu Iniciar.
 
-Após instalar, abra o **ScoreCast** pelo menu Iniciar. O aplicativo abrirá automaticamente no navegador em `http://localhost:8080`.
+Após instalar, abra o **ScoreCast** pelo menu Iniciar. O aplicativo abrirá automaticamente no navegador em `http://localhost:8080/api`.
 
 ---
 
@@ -105,6 +105,16 @@ npm run dev
 ```
 
 O frontend estará em `http://localhost:5173` e se comunicará com o backend em `http://localhost:8080/api`.
+
+---
+
+## URL da aplicação
+
+A aplicação (frontend + backend) fica disponível em:
+
+- **Desenvolvimento:** `http://localhost:8080/api`
+- **Produção (Linux):** `http://localhost:8080/api`
+- **Produção (Windows):** `http://localhost:8080/api`
 
 ---
 

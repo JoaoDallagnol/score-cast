@@ -19,7 +19,7 @@ public class SpaController implements ErrorController {
         String path = (String) request.getAttribute("jakarta.servlet.error.request_uri");
 
         // Erros de API devem retornar JSON, não o index.html
-        if (path != null && (path.startsWith("/api/") || path.equals("/api"))) {
+        if (path != null && path.startsWith("/api/")) {
             return null; // deixa o handler padrão do Spring tratar
         }
 

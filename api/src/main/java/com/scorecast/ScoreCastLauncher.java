@@ -15,7 +15,7 @@ import java.util.concurrent.CountDownLatch;
 public class ScoreCastLauncher {
 
     private static final String APP_NAME = "Score Cast";
-    private static final String APP_URL = "http://localhost:8080";
+    private static final String APP_URL = "http://localhost:8080/api";
     private static TrayIcon trayIcon;
     private static CountDownLatch latch = new CountDownLatch(1);
 
