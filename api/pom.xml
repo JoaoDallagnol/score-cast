@@ -58,8 +58,6 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <mainClass>com.scorecast.ScoreCastLauncher</mainClass>
-                    <!-- Mantém o JAR original sem repackage para uso com jpackage -->
-                    <classifier>exec</classifier>
                 </configuration>
             </plugin>
         </plugins>

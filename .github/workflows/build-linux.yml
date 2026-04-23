@@ -39,8 +39,33 @@ jobs:
         working-directory: api
         run: mvn -B package -DskipTests
 
+      - name: Create Runtime with jlink
+        run: |
+          jlink --add-modules java.base,java.logging,java.sql,java.naming,java.desktop,java.management,java.net.http \
+                --output runtime \
+                --strip-debug \
+                --compress=2
+
+      - name: Create AppImage with jpackage
+        run: |
+          jpackage \
+            --input api/target \
+            --main-jar scorecast-api-0.0.1-SNAPSHOT.jar \
+            --main-class com.scorecast.ScoreCastLauncher \
+            --name scorecast \
+            --app-version 1.0.0 \
+            --type app-image \
+            --runtime-image runtime \
+            --dest output
+
+      - name: Create tarball
+        run: |
+          cd output
+          tar -czf scorecast-linux-x64.tar.gz scorecast/
+          cd ..
+
       - name: Upload Release
         uses: softprops/action-gh-release@v2
         with:
-          files: api/target/scorecast-api-*.jar
+          files: output/scorecast-linux-x64.tar.gz
           name: ${{ github.ref_name }}

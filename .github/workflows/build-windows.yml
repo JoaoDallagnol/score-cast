@@ -39,7 +39,14 @@ jobs:
         working-directory: api
         run: mvn -B package -DskipTests
 
-      - name: Generate EXE with jpackage
+      - name: Create Runtime with jlink
+        run: |
+          jlink --add-modules java.base,java.logging,java.sql,java.naming,java.desktop,java.management,java.net.http `
+                --output runtime `
+                --strip-debug `
+                --compress=2
+
+      - name: Create EXE with jpackage
         run: |
           jpackage `
             --input api/target `
@@ -48,21 +55,10 @@ jobs:
             --name ScoreCast `
             --app-version 1.0.0 `
             --type exe `
+            --runtime-image runtime `
             --win-shortcut `
             --win-menu `
-            --dest output `
-            --java-options "-Dspring.profiles.active=prod"
-
-      - name: Create Desktop Shortcut
-        run: |
-          $exePath = Get-ChildItem output/*.exe | Select-Object -First 1
-          $WshShell = New-Object -ComObject WScript.Shell
-          $shortcut = $WshShell.CreateShortcut("$env:USERPROFILE\Desktop\ScoreCast.lnk")
-          $shortcut.TargetPath = $exePath.FullName
-          $shortcut.WorkingDirectory = $exePath.DirectoryName
-          $shortcut.Description = "ScoreCast - Gerenciador de Campeonatos"
-          $shortcut.Save()
-          Write-Host "Atalho criado na Área de Trabalho"
+            --dest output
 
       - name: Upload Release
         uses: softprops/action-gh-release@v2
