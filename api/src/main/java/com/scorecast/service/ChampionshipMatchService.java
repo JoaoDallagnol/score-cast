@@ -80,9 +80,12 @@ public class ChampionshipMatchService {
     }
 
     @Transactional(readOnly = true)
-    public List<ChampionshipMatchResponse> listByChampionship(UUID championshipId) {
+    public List<ChampionshipMatchResponse> listByChampionship(UUID championshipId, String sort) {
         championshipService.require(championshipId);
-        return matchRepository.findByChampionshipIdOrderById(championshipId).stream().map(this::toResponse).toList();
+        var matches = "asc".equalsIgnoreCase(sort)
+                ? matchRepository.findByChampionshipIdOrderByCreatedAtAsc(championshipId)
+                : matchRepository.findByChampionshipIdOrderByCreatedAtDesc(championshipId);
+        return matches.stream().map(this::toResponse).toList();
     }
 
     @Transactional
@@ -138,7 +141,8 @@ public class ChampionshipMatchService {
                 m.getTeamAway().getId(),
                 m.getTeamAway().getName(),
                 m.getScoreHome(),
-                m.getScoreAway()
+                m.getScoreAway(),
+                m.getCreatedAt()
         );
     }
 }

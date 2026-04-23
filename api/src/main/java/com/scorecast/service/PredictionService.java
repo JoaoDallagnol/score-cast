@@ -46,10 +46,12 @@ public class PredictionService {
     }
 
     @Transactional(readOnly = true)
-    public List<MatchWithPredictionResponse> listMatchesWithPredictions(UUID studentId, UUID championshipId) {
-        log.info("Listing matches with predictions for student: {} championship: {}", studentId, championshipId);
+    public List<MatchWithPredictionResponse> listMatchesWithPredictions(UUID studentId, UUID championshipId, String sort) {
+        log.info("Listing matches with predictions for student: {} championship: {} sort: {}", studentId, championshipId, sort);
         studentService.require(studentId);
-        List<ChampionshipMatch> matches = matchRepository.findByChampionshipIdOrderById(championshipId);
+        List<ChampionshipMatch> matches = "asc".equalsIgnoreCase(sort)
+                ? matchRepository.findByChampionshipIdOrderByCreatedAtAsc(championshipId)
+                : matchRepository.findByChampionshipIdOrderByCreatedAtDesc(championshipId);
         List<UUID> matchIds = matches.stream().map(ChampionshipMatch::getId).toList();
         Map<UUID, Prediction> predictionByMatchId = predictionRepository
                 .findByStudentIdAndMatchIdIn(studentId, matchIds)

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Trash2 } from 'lucide-react'
+import { Trash2, ArrowUp, ArrowDown } from 'lucide-react'
 import { api } from '@/api'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -24,10 +24,11 @@ export default function MatchesTab({ championshipId }) {
   const [loadingCreate, setLoadingCreate] = useState(false)
   const [loadingResult, setLoadingResult] = useState(false)
   const [grid, setGrid] = useState(false)
+  const [sort, setSort] = useState('desc')
 
   async function load() {
     try {
-      const [m, t] = await Promise.all([api.getMatches(championshipId), api.getTeams(championshipId)])
+      const [m, t] = await Promise.all([api.getMatches(championshipId, sort), api.getTeams(championshipId)])
       setMatches(m)
       setTeams(t)
     } catch (e) {
@@ -35,7 +36,7 @@ export default function MatchesTab({ championshipId }) {
     }
   }
 
-  useEffect(() => { load() }, [championshipId])
+  useEffect(() => { load() }, [championshipId, sort])
 
   async function handleCreate(e) {
     e.preventDefault()
@@ -109,9 +110,19 @@ export default function MatchesTab({ championshipId }) {
 
       {error && <p className="text-sm text-red-600">{error}</p>}
 
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-4">
         <span className="text-sm text-slate-500">{matches.length} partida{matches.length !== 1 ? 's' : ''}</span>
-        <LayoutToggle grid={grid} onToggle={() => setGrid((g) => !g)} />
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setSort(sort === 'asc' ? 'desc' : 'asc')}
+            className="flex items-center justify-center w-10 h-10 rounded border-2 border-slate-300 bg-white hover:bg-slate-50 active:bg-slate-100 transition-colors cursor-pointer"
+            title={sort === 'asc' ? 'Ordenar decrescente' : 'Ordenar crescente'}
+            type="button"
+          >
+            {sort === 'asc' ? <ArrowUp size={18} className="text-slate-600" /> : <ArrowDown size={18} className="text-slate-600" />}
+          </button>
+          <LayoutToggle grid={grid} onToggle={() => setGrid((g) => !g)} />
+        </div>
       </div>
 
       <div className={grid ? 'grid grid-cols-2 gap-2' : 'space-y-2'}>

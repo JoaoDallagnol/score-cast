@@ -31,9 +31,10 @@ public class PredictionController {
     @GetMapping
     public List<MatchWithPredictionResponse> listMatchesWithPredictions(
             @PathVariable UUID studentId,
-            @RequestParam UUID championshipId
+            @RequestParam UUID championshipId,
+            @RequestParam(defaultValue = "desc") String sort
     ) {
-        return predictionService.listMatchesWithPredictions(studentId, championshipId);
+        return predictionService.listMatchesWithPredictions(studentId, championshipId, sort);
     }
 
     @PostMapping("/batch")

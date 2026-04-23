@@ -51,7 +51,7 @@ export const api = {
     req(`/championships/${championshipId}/students/${studentId}`, { method: 'DELETE' }),
 
   // Matches
-  getMatches: (championshipId) => req(`/championships/${championshipId}/matches`),
+  getMatches: (championshipId, sort = 'desc') => req(`/championships/${championshipId}/matches?sort=${sort}`),
   createMatch: (championshipId, data) =>
     req(`/championships/${championshipId}/matches`, { method: 'POST', body: JSON.stringify(data) }),
   setResult: (matchId, data) =>
@@ -62,8 +62,8 @@ export const api = {
   // Predictions
   savePrediction: (studentId, matchId, data) =>
     req(`/students/${studentId}/predictions/${matchId}`, { method: 'PUT', body: JSON.stringify(data) }),
-  getPredictions: (studentId, championshipId) =>
-    req(`/students/${studentId}/predictions?championshipId=${championshipId}`),
+  getPredictions: (studentId, championshipId, sort = 'desc') =>
+    req(`/students/${studentId}/predictions?championshipId=${championshipId}&sort=${sort}`),
   savePredictionsBatch: (studentId, data) =>
     req(`/students/${studentId}/predictions/batch`, { method: 'POST', body: JSON.stringify(data) }),
 

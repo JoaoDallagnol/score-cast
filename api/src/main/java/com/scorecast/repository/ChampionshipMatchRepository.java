@@ -9,4 +9,8 @@ import java.util.UUID;
 public interface ChampionshipMatchRepository extends JpaRepository<ChampionshipMatch, UUID> {
 
     List<ChampionshipMatch> findByChampionshipIdOrderById(UUID championshipId);
+
+    List<ChampionshipMatch> findByChampionshipIdOrderByCreatedAtAsc(UUID championshipId);
+
+    List<ChampionshipMatch> findByChampionshipIdOrderByCreatedAtDesc(UUID championshipId);
 }

@@ -2,6 +2,7 @@ package com.scorecast.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -9,10 +10,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "championship_matches")
 public class ChampionshipMatch {
 
@@ -41,6 +46,10 @@ public class ChampionshipMatch {
     @Column(name = "score_away")
     private Integer scoreAway;
 
+    @CreatedDate
+    @Column(name = "created_at", updatable = false)
+    private Instant createdAt;
+
     public UUID getId() { return id; }
 
     public String getTitle() { return title; }
@@ -60,6 +69,8 @@ public class ChampionshipMatch {
 
     public Integer getScoreAway() { return scoreAway; }
     public void setScoreAway(Integer scoreAway) { this.scoreAway = scoreAway; }
+
+    public Instant getCreatedAt() { return createdAt; }
 
     public boolean hasOfficialResult() {
         return scoreHome != null && scoreAway != null;

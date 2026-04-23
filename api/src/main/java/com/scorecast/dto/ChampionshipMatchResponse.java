@@ -1,5 +1,6 @@
 package com.scorecast.dto;
 
+import java.time.Instant;
 import java.util.UUID;
 
 public record ChampionshipMatchResponse(
@@ -11,6 +12,7 @@ public record ChampionshipMatchResponse(
         UUID teamAwayId,
         String teamAwayName,
         Integer scoreHome,
-        Integer scoreAway
+        Integer scoreAway,
+        Instant createdAt
 ) {
 }

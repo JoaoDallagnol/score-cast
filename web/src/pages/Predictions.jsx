@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { ArrowUp, ArrowDown } from 'lucide-react'
 import { api } from '@/api'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -7,42 +8,40 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@
 
 function PredictionCard({ item, onChange }) {
   return (
-    <div className="rounded-lg border border-slate-200 bg-white px-4 py-4 space-y-3">
-      <div>
-        <p className="text-xs text-slate-400 font-medium uppercase tracking-wide">{item.title}</p>
-        <p className="font-semibold text-slate-800">{item.teamHomeName} <span className="text-slate-400 font-normal">vs</span> {item.teamAwayName}</p>
-        {item.scoreHome != null && (
-          <p className="text-xs text-slate-500 mt-0.5">Resultado oficial: {item.scoreHome} – {item.scoreAway}</p>
-        )}
-      </div>
-      <div className="flex items-center gap-3">
-        <div className="space-y-1 flex-1">
-          <Label className="text-xs">{item.teamHomeName}</Label>
+    <div className="rounded-lg border border-slate-200 bg-white p-3">
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex-1">
+          <p className="text-xs text-slate-400 font-medium uppercase tracking-wide">{item.title}</p>
+          <p className="font-semibold text-slate-800 text-sm">{item.teamHomeName} vs {item.teamAwayName}</p>
+          {item.scoreHome != null && (
+            <p className="text-xs text-slate-500 mt-1">Resultado: {item.scoreHome}–{item.scoreAway}</p>
+          )}
+        </div>
+        <div className="flex items-center gap-1 shrink-0">
           <Input
             type="number"
             min="0"
             placeholder="–"
             value={item.predHome ?? ''}
             onChange={(e) => onChange(item.matchId, 'predHome', e.target.value)}
+            className="w-12 h-8 text-center text-sm p-1"
           />
-        </div>
-        <span className="text-slate-400 mt-5">×</span>
-        <div className="space-y-1 flex-1">
-          <Label className="text-xs">{item.teamAwayName}</Label>
+          <span className="text-slate-400 font-bold text-sm">×</span>
           <Input
             type="number"
             min="0"
             placeholder="–"
             value={item.predAway ?? ''}
             onChange={(e) => onChange(item.matchId, 'predAway', e.target.value)}
+            className="w-12 h-8 text-center text-sm p-1"
           />
+          {item.pointsAwarded != null && (
+            <div className="text-center ml-2 min-w-fit">
+              <p className="text-xs text-slate-400">Pts</p>
+              <p className="font-bold text-slate-700 text-sm">{item.pointsAwarded}</p>
+            </div>
+          )}
         </div>
-        {item.pointsAwarded != null && (
-          <div className="mt-5 text-right shrink-0">
-            <span className="text-xs text-slate-400">Pontos</span>
-            <p className="font-bold text-slate-700">{item.pointsAwarded}</p>
-          </div>
-        )}
       </div>
     </div>
   )
@@ -57,6 +56,7 @@ export default function Predictions() {
   const [saving, setSaving] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
+  const [sort, setSort] = useState('desc')
 
   useEffect(() => {
     api.getChampionships().then(setChampionships).catch((e) => setError(e.message))
@@ -76,18 +76,34 @@ export default function Predictions() {
     }
   }
 
+  async function loadPredictions() {
+    if (!studentId || !championshipId) return
+    try {
+      const data = await api.getPredictions(studentId, championshipId, sort)
+      setCards(data)
+    } catch (e) {
+      setError(e.message)
+    }
+  }
+
   async function onStudentChange(val) {
     setStudentId(val)
     setCards([])
     setSuccess(false)
     setError('')
     try {
-      const data = await api.getPredictions(val, championshipId)
+      const data = await api.getPredictions(val, championshipId, sort)
       setCards(data)
     } catch (e) {
       setError(e.message)
     }
   }
+
+  useEffect(() => {
+    if (studentId && championshipId) {
+      loadPredictions()
+    }
+  }, [sort])
 
   function handleChange(matchId, field, value) {
     setCards((prev) =>
@@ -110,7 +126,6 @@ export default function Predictions() {
         predAway: c.predAway,
       }))
       const updated = await api.savePredictionsBatch(studentId, payload)
-      // merge pontos atualizados de volta nos cards
       setCards((prev) =>
         prev.map((c) => {
           const saved = updated.find((u) => u.matchId === c.matchId)
@@ -126,7 +141,7 @@ export default function Predictions() {
   }
 
   return (
-    <div className="space-y-6 max-w-xl">
+    <div className="space-y-6 max-w-2xl">
       <h1 className="text-2xl font-bold">Palpites</h1>
 
       <div className="grid grid-cols-2 gap-3">
@@ -159,7 +174,18 @@ export default function Predictions() {
 
       {cards.length > 0 && (
         <>
-          <div className="space-y-3">
+          <div className="flex items-center justify-between gap-4">
+            <span className="text-sm text-slate-500">{cards.length} partida{cards.length !== 1 ? 's' : ''}</span>
+            <button
+              onClick={() => setSort(sort === 'asc' ? 'desc' : 'asc')}
+              className="flex items-center justify-center w-10 h-10 rounded border-2 border-slate-300 bg-white hover:bg-slate-50 active:bg-slate-100 transition-colors cursor-pointer"
+              title={sort === 'asc' ? 'Ordenar decrescente' : 'Ordenar crescente'}
+              type="button"
+            >
+              {sort === 'asc' ? <ArrowUp size={18} className="text-slate-600" /> : <ArrowDown size={18} className="text-slate-600" />}
+            </button>
+          </div>
+          <div className="space-y-2">
             {cards.map((item) => (
               <PredictionCard key={item.matchId} item={item} onChange={handleChange} />
             ))}
