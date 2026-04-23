@@ -48,8 +48,10 @@ public class TeamService {
     public List<TeamResponse> listByChampionship(UUID championshipId) {
         championshipService.require(championshipId);
         return teamRepository.findByChampionshipIdOrderByNameAsc(championshipId)
+                .stream()
                 .sorted((a, b) -> a.getName().compareToIgnoreCase(b.getName()))
-                .map(this::toResponse).toList();
+                .map(this::toResponse)
+                .toList();
     }
 
     @Transactional
