@@ -10,7 +10,7 @@ import java.util.UUID;
 
 public interface StudentRepository extends JpaRepository<Student, UUID> {
 
-    List<Student> findByChampionshipIdOrderByNameAscIgnoreCase(UUID championshipId);
+    List<Student> findByChampionshipIdOrderByNameAsc(UUID championshipId);
 
     @Query("""
             SELECT s FROM Student s

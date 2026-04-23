@@ -66,7 +66,9 @@ public class StudentService {
     public List<StudentResponse> listByChampionship(UUID championshipId, UUID schoolId) {
         championshipService.require(championshipId);
         return studentRepository.findForRanking(championshipId, schoolId, null)
-                .stream().map(this::toResponse).toList();
+                .stream()
+                .sorted((a, b) -> a.getName().toLowerCase().compareTo(b.getName().toLowerCase()))
+                .map(this::toResponse).toList();
     }
 
     @Transactional

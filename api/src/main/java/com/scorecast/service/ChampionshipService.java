@@ -47,7 +47,9 @@ public class ChampionshipService {
 
     @Transactional(readOnly = true)
     public List<ChampionshipResponse> list() {
-        return championshipRepository.findAllByOrderByNameAscIgnoreCase().stream().map(this::toResponse).toList();
+        return championshipRepository.findAll().stream()
+                .sorted((a, b) -> a.getName().toLowerCase().compareTo(b.getName().toLowerCase()))
+                .map(this::toResponse).toList();
     }
 
     @Transactional(readOnly = true)

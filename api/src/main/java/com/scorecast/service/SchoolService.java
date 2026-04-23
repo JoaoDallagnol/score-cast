@@ -59,7 +59,9 @@ public class SchoolService {
 
     @Transactional(readOnly = true)
     public List<SchoolResponse> list() {
-        return schoolRepository.findAllByOrderByNameAscIgnoreCase().stream().map(this::toResponse).toList();
+        return schoolRepository.findAll().stream()
+                .sorted((a, b) -> a.getName().toLowerCase().compareTo(b.getName().toLowerCase()))
+                .map(this::toResponse).toList();
     }
 
     @Transactional
