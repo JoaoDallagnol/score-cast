@@ -48,8 +48,10 @@ jobs:
 
       - name: Create EXE with jpackage
         run: |
+          mkdir -p jars
+          Copy-Item api/target/scorecast-api-0.0.1-SNAPSHOT.jar jars/
           jpackage `
-            --input api/target `
+            --input jars `
             --main-jar scorecast-api-0.0.1-SNAPSHOT.jar `
             --main-class com.scorecast.ScoreCastLauncher `
             --name ScoreCast `
