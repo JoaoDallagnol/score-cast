@@ -47,7 +47,7 @@ public class TeamService {
     @Transactional(readOnly = true)
     public List<TeamResponse> listByChampionship(UUID championshipId) {
         championshipService.require(championshipId);
-        return teamRepository.findByChampionshipIdOrderByNameAsc(championshipId)
+        return teamRepository.findByChampionshipIdOrderByNameAscIgnoreCase(championshipId)
                 .stream().map(this::toResponse).toList();
     }
 

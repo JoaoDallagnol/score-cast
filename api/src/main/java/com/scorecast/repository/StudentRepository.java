@@ -10,14 +10,14 @@ import java.util.UUID;
 
 public interface StudentRepository extends JpaRepository<Student, UUID> {
 
-    List<Student> findByChampionshipIdOrderByNameAsc(UUID championshipId);
+    List<Student> findByChampionshipIdOrderByNameAscIgnoreCase(UUID championshipId);
 
     @Query("""
             SELECT s FROM Student s
             WHERE s.championship.id = :championshipId
             AND (:schoolId IS NULL OR s.school.id = :schoolId)
             AND (:serie IS NULL OR LOWER(s.serie) = LOWER(:serie))
-            ORDER BY s.name ASC
+            ORDER BY LOWER(s.name) ASC
             """)
     List<Student> findForRanking(
             @Param("championshipId") UUID championshipId,

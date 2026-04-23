@@ -59,7 +59,7 @@ public class SchoolService {
 
     @Transactional(readOnly = true)
     public List<SchoolResponse> list() {
-        return schoolRepository.findAll().stream().map(this::toResponse).toList();
+        return schoolRepository.findAllByOrderByNameAscIgnoreCase().stream().map(this::toResponse).toList();
     }
 
     @Transactional

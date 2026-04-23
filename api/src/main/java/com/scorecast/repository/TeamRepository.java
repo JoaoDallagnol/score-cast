@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface TeamRepository extends JpaRepository<Team, UUID> {
 
-    List<Team> findByChampionshipIdOrderByNameAsc(UUID championshipId);
+    List<Team> findByChampionshipIdOrderByNameAscIgnoreCase(UUID championshipId);
 
     boolean existsByNameAndChampionshipId(String name, UUID championshipId);
 }
